@@ -39,7 +39,7 @@ public class ViewPagerCategoryAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if(position==0){
-            return "Popular Now";
+            return "Your Favourites";
         } else if (position == 1) {
             return "Most Usage";
         }else if (position == 2) {
