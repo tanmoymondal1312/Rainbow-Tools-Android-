@@ -4,13 +4,21 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.VideoView;
 
+import com.mediaghor.rainbowtools.Adapter.CardItemAdapter;
+import com.mediaghor.rainbowtools.Models.CardItemsModel;
 import com.mediaghor.rainbowtools.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentImagesOptimazation extends Fragment {
 
@@ -21,20 +29,33 @@ public class FragmentImagesOptimazation extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_images_optimazation, container, false);
 
-        // Find the VideoView by its ID
-        VideoView videoView = rootView.findViewById(R.id.video_view);
+        // Setting up RecyclerView
+        RecyclerView recyclerView = rootView.findViewById(R.id.use_now_recycler_view_id);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        Log.d("jjj","Niceeee");
+        // Preparing data for the adapter
+        List<CardItemsModel> cardItemsList = new ArrayList<>();
+        cardItemsList.add(new CardItemsModel(
+                "Background Remover",
+                "android.resource://" + requireContext().getPackageName() + "/" + R.raw.card1bgremover
+        ));
+        cardItemsList.add(new CardItemsModel(
+                "Photo Optimizer",
+                "android.resource://" + requireContext().getPackageName() + "/" + R.raw.imageresulationincreser
+        ));
+        cardItemsList.add(new CardItemsModel(
+                "Image Resizer",
+                "android.resource://" + requireContext().getPackageName() + "/" + R.raw.card3imageresizer
+        ));
 
-        // Path to the video file in the raw folder
-        Uri videoUri = Uri.parse("android.resource://" + requireContext().getPackageName() + "/" + R.raw.card1bgremover);
+        // Setting adapter
+        CardItemAdapter adapter = new CardItemAdapter(requireContext(), cardItemsList);
+        recyclerView.setAdapter(adapter);
 
-        // Set the video URI
-        videoView.setVideoURI(videoUri);
-
-        // Start the video
-        videoView.start();
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 2);
+        recyclerView.setLayoutManager(gridLayoutManager);
 
         return rootView;
     }
