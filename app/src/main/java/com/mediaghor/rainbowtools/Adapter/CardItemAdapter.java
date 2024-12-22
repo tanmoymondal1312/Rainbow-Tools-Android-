@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -17,12 +16,11 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.mediaghor.rainbowtools.Activities.BgremoverActivity;
+import com.mediaghor.rainbowtools.Activities.BackgroundRemoverActivity;
 import com.mediaghor.rainbowtools.Models.CardItemsModel;
 import com.mediaghor.rainbowtools.R;
 
 import java.util.List;
-import java.util.Objects;
 
 public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHolder> {
 
@@ -107,7 +105,7 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
         }
         holder.parentCard.setOnClickListener(v -> {
             if (currentItem.getText().equals("Background Remover")) {
-                Intent intent = new Intent(context, BgremoverActivity.class);
+                Intent intent = new Intent(context, BackgroundRemoverActivity.class);
                 context.startActivity(intent);
             }
         });
