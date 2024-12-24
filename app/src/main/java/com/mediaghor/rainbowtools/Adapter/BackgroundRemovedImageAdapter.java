@@ -38,13 +38,7 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
 
     @Override
     public void onBindViewHolder(@NonNull BackgroundRemovedImageAdapter.ViewHolder holder, int position) {
-        // Load image from URL into ImageView using Glide
         Uri imageUrl = imageUrls.get(position);
-//        String Urlll = imageUrl.toString();
-//        holder.btn.setText(Urlll);
-        Log.d("PhotoPickerAdapter", imageUrl.toString());
-
-        // Fetch image dimensions asynchronously
         Glide.with(holder.imv_listMedia.getContext())
                 .asBitmap()
                 .load(imageUrl)

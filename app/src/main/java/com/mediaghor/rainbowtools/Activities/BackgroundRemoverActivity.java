@@ -3,6 +3,7 @@ package com.mediaghor.rainbowtools.Activities;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.mediaghor.rainbowtools.Adapter.BackgroundRemovedImageAdapter;
 import com.mediaghor.rainbowtools.Adapter.PhotoPickerAdapter;
+import com.mediaghor.rainbowtools.Helpers.ImageUploadHelper;
 import com.mediaghor.rainbowtools.R;
 
 import java.util.ArrayList;
@@ -58,9 +60,45 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
                     rv_pickImages.setLayoutManager(layoutManager);
                     rv_pickImages.setAdapter(adapter);
                     setButtonClickable();
+                    uploadImagesToBackend(uris);
                 }
 
             });
+
+
+
+
+
+
+
+
+
+    private void uploadImagesToBackend(List<Uri> uris) {
+        // Create an instance of ImageUploadHelper
+        ImageUploadHelper imageUploadHelper = new ImageUploadHelper(this);
+
+        // Call the uploadImages method
+        imageUploadHelper.uploadImages(uris, new ImageUploadHelper.ImageUploadCallback() {
+            @Override
+            public void onImageUploadSuccess(List<Uri> imageUrls) {
+                // Handle success: the imageUrls list contains the processed image URLs
+                BackgroundRemoverActivity.this.imageUrls = imageUrls;
+//                Log.d("post",imageUrls.toString());
+                // Optionally, you can update the UI with the processed images
+                Toast.makeText(BackgroundRemoverActivity.this, "Images processed successfully", Toast.LENGTH_SHORT).show();
+                AddingBgRemovedImages();
+                setButtonDisabled();
+            }
+
+
+            @Override
+            public void onImageUploadFailure(String errorMessage) {
+                // Handle failure
+                Toast.makeText(BackgroundRemoverActivity.this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                setButtonDisabled();
+            }
+        });
+    }
 
 
 
@@ -88,7 +126,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         generateButton.setText(""); // Clear text
         findViewById(R.id.progress_indicator).setVisibility(View.VISIBLE); // Show progress bar
 
-        AddingBgRemovedImages();
+
 
     }
 
@@ -147,11 +185,11 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             }
         });
         //Added Some Manually
-        imageUrls.add(Uri.parse("http://192.168.0.105:8000/image-optimization/get_bg_removed_images/1.png"));
-        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/893/200/200.jpg?hmac=MKUqbcyRrvAYoTmgHo74fEI3o9V4CH2kBrvWfmHkr7U"));
-        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/670/200/300.jpg?grayscale&hmac=OfelnBKL5NEzJJiK2lCpkJww2xtIQZAsfyI5yWniBpo"));
-        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI"));
-        imageUrls.add(Uri.parse("http://192.168.0.105:8000/image-optimization/get_bg_removed_images/1.png"));
+//        imageUrls.add(Uri.parse("http://192.168.0.105:8000/image-optimization/get_bg_removed_images/1.png"));
+//        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/893/200/200.jpg?hmac=MKUqbcyRrvAYoTmgHo74fEI3o9V4CH2kBrvWfmHkr7U"));
+//        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/670/200/300.jpg?grayscale&hmac=OfelnBKL5NEzJJiK2lCpkJww2xtIQZAsfyI5yWniBpo"));
+//        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI"));
+//        imageUrls.add(Uri.parse("http://192.168.0.105:8000/image-optimization/get_bg_removed_images/1.png"));
 
 
     }
