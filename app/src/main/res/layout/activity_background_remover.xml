@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,25 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".Activities.BackgroundRemoverActivity">
 
+    <!-- First Toolbar (Top Toolbar) -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/white">
+        android:layout_height="45dp"
+        android:background="@color/white"
+        android:elevation="4dp">
 
-        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="45dp"
             android:contentInsetStart="0dp"
-            android:contentInsetLeft="0dp"
             android:contentInsetEnd="0dp"
-            android:contentInsetRight="0dp"
-            android:contentInsetEndWithActions="0dp"
-            android:contentInsetStartWithNavigation="0dp"
-            android:gravity="top|start">
+            android:elevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,8 +31,6 @@
                     android:id="@+id/toolbar_back_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginRight="20dp"
                     android:background="@android:color/transparent"
                     android:src="@drawable/baseline_arrow_back_24" />
 
@@ -63,41 +56,17 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appBarLayout"
-        android:background="@android:color/transparent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent">
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/choose_images"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@android:color/transparent"
-                android:padding="4dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/choose_images" />
-
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/appBarLayout"
+        android:layout_above="@id/appBarLayout_2"
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -105,15 +74,12 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_for_processed_images"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </androidx.recyclerview.widget.RecyclerView>
-
-
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/recycler_for_selected_images_to_remove_bg" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -121,15 +87,66 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_for_selected_images"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </androidx.recyclerview.widget.RecyclerView>
-
-
-
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/recycler_for_selected_images_to_remove_bg" />
         </LinearLayout>
-
     </LinearLayout>
 
+    <!-- Second Toolbar (Bottom Toolbar) -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:elevation="4dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_2"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:background="@color/white">
+            <FrameLayout
+                android:layout_width="150dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center">
+
+                <!-- The Material Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/generate_button"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:enabled="false"
+                    android:backgroundTint="#808080"
+                    android:text="Generate"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:padding="8dp"
+                    style="@style/Widget.MaterialComponents.Button" />
+
+                <!-- The Progress Bar -->
+                <ProgressBar
+                    android:id="@+id/progress_indicator"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:indeterminate="true"
+                    style="?android:attr/progressBarStyleLarge" />
+
+            </FrameLayout>
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/choose_images"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:scaleType="centerCrop"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/choose_images"
+                android:layout_gravity="end"/>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
 </RelativeLayout>

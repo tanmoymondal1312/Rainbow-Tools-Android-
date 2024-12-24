@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="170dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="6dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/rv_bg_removed_image"
+        android:layout_width="166dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"/>
+
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="10dp"
+        app:shimmer_auto_start="true"
+        app:shimmer_duration="1500">
+
+        <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple_button_effect"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="24dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:drawableStart="@drawable/baseline_cloud_download_24"
+        android:drawablePadding="8dp"
+        android:elevation="4dp"
+        tools:ignore="UseCompoundDrawables" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+
+</androidx.cardview.widget.CardView>

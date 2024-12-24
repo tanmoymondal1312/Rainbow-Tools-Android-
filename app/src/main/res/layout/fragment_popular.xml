@@ -8,11 +8,24 @@
     android:background="@color/white"
     tools:context=".Fragments.FragmentPopular">
 
+    <ImageView
+        android:src="@drawable/choose_images"
+        android:id="@+id/imgTest"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center_horizontal"/>
+
+
     <TextView
+        android:id="@+id/urlText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Define User Favourite items"
         android:gravity="center"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:longClickable="true"/>
+
 
 </LinearLayout>

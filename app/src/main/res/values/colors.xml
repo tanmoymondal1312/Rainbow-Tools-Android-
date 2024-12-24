@@ -3,6 +3,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="card_pressed_color">#E0E0E0</color> <!-- Light gray for pressed -->
     <color name="default_card_color">#FFFFFF</color> <!-- Default white card background -->
+    <color name="gray">#808080</color>
+    <color name="teal_700">#00796B</color>
+    <color name="teal_200">#bcf5f5</color>
+    <color name="black">#000000</color>
 
 
 </resources>
