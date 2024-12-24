@@ -8,30 +8,28 @@
     app:cardCornerRadius="6dp"
     app:cardElevation="6dp">
 
+    <!-- FrameLayout for image and cancel button -->
     <FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <!-- ImageView for selected image -->
+        <ImageView
+            android:id="@+id/selected_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:layout_marginVertical="3dp" />
 
-    <ImageView
-        android:id="@+id/selected_image"
-        android:layout_width="166dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"/>
-
-
-    <ImageButton
-        android:id="@+id/btn_cancel_from_selected_images"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|top"
-        android:src="@drawable/baseline_close_24"
-        android:background="@android:color/transparent"
-        android:contentDescription="close" />
-
+        <!-- Cancel button overlay -->
+        <ImageButton
+            android:id="@+id/btn_cancel_from_selected_images"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|top"
+            android:src="@drawable/baseline_close_24"
+            android:background="@android:color/transparent"
+            android:contentDescription="Close button" />
     </FrameLayout>
-
 </androidx.cardview.widget.CardView>

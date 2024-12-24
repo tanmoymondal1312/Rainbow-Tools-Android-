@@ -2,48 +2,67 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="170dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardCornerRadius="6dp"
     app:cardElevation="6dp">
 
-    <ImageView
-        android:id="@+id/rv_bg_removed_image"
-        android:layout_width="166dp"
+    <!-- Parent LinearLayout for vertical stacking -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"/>
+        android:orientation="vertical"
+        android:padding="5dp">
 
+        <!-- FrameLayout for ImageView and ProgressBar -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="10dp"
-        app:shimmer_auto_start="true"
-        app:shimmer_duration="1500">
+            <!-- ImageView for displaying the image -->
+            <ImageView
+                android:id="@+id/rv_bg_removed_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:src="@drawable/emtyimgbgrmv" />
 
-        <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_download"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ripple_button_effect"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="24dp"
-        android:text=""
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:drawableStart="@drawable/baseline_cloud_download_24"
-        android:drawablePadding="8dp"
-        android:elevation="4dp"
-        tools:ignore="UseCompoundDrawables" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
+            <!-- ProgressBar centered over the ImageView -->
+            <ProgressBar
+                android:id="@+id/image_loading_progress"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
 
+        <!-- ShimmerFrameLayout for the Button -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:shimmer_auto_start="true"
+            app:shimmer_duration="1500">
 
-
+            <!-- Button for Download -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/ripple_button_effect"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="20dp"
+                android:text="Download"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:drawableStart="@drawable/baseline_cloud_download_24"
+                android:drawablePadding="8dp"
+                android:elevation="4dp" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

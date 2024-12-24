@@ -1,6 +1,7 @@
 package com.mediaghor.rainbowtools.Activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     MaterialButton generateButton;
     ProgressBar progressIndicator;
     List<Uri> imageUrls = new ArrayList<>();
+    public List<Uri> selectedUris;
     BackgroundRemovedImageAdapter backgroundRemovedImageAdapter;
 
 
@@ -54,13 +56,13 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5),uris ->{
                 if(uris != null)
                 {
+                    selectedUris = uris;
                     Toast.makeText(this, String.valueOf(uris.size()), Toast.LENGTH_SHORT).show();
                     PhotoPickerAdapter adapter =  new PhotoPickerAdapter(uris);
                     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
                     rv_pickImages.setLayoutManager(layoutManager);
                     rv_pickImages.setAdapter(adapter);
                     setButtonClickable();
-                    uploadImagesToBackend(uris);
                 }
 
             });
@@ -131,7 +133,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     }
 
     private void AddingBgRemovedImages(){
-        backgroundRemovedImageAdapter = new BackgroundRemovedImageAdapter(imageUrls);
+        backgroundRemovedImageAdapter = new BackgroundRemovedImageAdapter(imageUrls, this);
         LinearLayoutManager layoutManager_2 = new LinearLayoutManager(this);
         rv_bgRemovedImages.setLayoutManager(layoutManager_2);
         rv_bgRemovedImages.setAdapter(backgroundRemovedImageAdapter);
@@ -181,6 +183,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         generateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                uploadImagesToBackend(selectedUris);
                 setButtonGenerating();
             }
         });
