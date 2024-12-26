@@ -1,5 +1,7 @@
 package com.mediaghor.rainbowtools.Activities;
 
+import static com.mediaghor.rainbowtools.R.drawable.*;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
@@ -13,6 +15,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 
 
@@ -40,22 +44,25 @@ import java.util.List;
 public class BackgroundRemoverActivity extends AppCompatActivity {
     //Variables
     ImageButton toolbarBackBtn,chooseFilesBtn;
+    AppCompatButton downLoadAll;
     RecyclerView rv_pickImages,rv_bgRemovedImages;
     MaterialButton generateButton;
     ProgressBar progressIndicator;
     List<Uri> imageUrls = new ArrayList<>();
     public List<Uri> selectedUris;
+    LinearLayout ParentOfBody;
     BackgroundRemovedImageAdapter backgroundRemovedImageAdapter;
 
 
 
 
 
-    //Select The Images
+    //Select The Images and saw in adapter and store in a public variable
     ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia =
             registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5),uris ->{
                 if(uris != null)
                 {
+                    ParentOfBody.setBackground(ContextCompat.getDrawable(BackgroundRemoverActivity.this, R.drawable.layout_bg_1));
                     selectedUris = uris;
                     Toast.makeText(this, String.valueOf(uris.size()), Toast.LENGTH_SHORT).show();
                     PhotoPickerAdapter adapter =  new PhotoPickerAdapter(uris);
@@ -67,14 +74,6 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
             });
 
-
-
-
-
-
-
-
-
     private void uploadImagesToBackend(List<Uri> uris) {
         // Create an instance of ImageUploadHelper
         ImageUploadHelper imageUploadHelper = new ImageUploadHelper(this);
@@ -85,9 +84,8 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             public void onImageUploadSuccess(List<Uri> imageUrls) {
                 // Handle success: the imageUrls list contains the processed image URLs
                 BackgroundRemoverActivity.this.imageUrls = imageUrls;
-//                Log.d("post",imageUrls.toString());
-                // Optionally, you can update the UI with the processed images
                 Toast.makeText(BackgroundRemoverActivity.this, "Images processed successfully", Toast.LENGTH_SHORT).show();
+
                 AddingBgRemovedImages();
                 setButtonDisabled();
             }
@@ -101,6 +99,11 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Download All Recyclerview processed images
+//    private void downloadAllImages() {
+//
+//    }
 
 
 
@@ -131,7 +134,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
 
     }
-
+    //Function To Add The Images From Response to adapter
     private void AddingBgRemovedImages(){
         backgroundRemovedImageAdapter = new BackgroundRemovedImageAdapter(imageUrls, this);
         LinearLayoutManager layoutManager_2 = new LinearLayoutManager(this);
@@ -164,6 +167,8 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         rv_bgRemovedImages = findViewById(R.id.recycler_for_processed_images);
         generateButton = findViewById(R.id.generate_button);
         progressIndicator = findViewById(R.id.progress_indicator);
+        ParentOfBody = findViewById(R.id.contentLayout);
+        downLoadAll = findViewById(R.id.btn_download_all_bg_removed_images);
         //Toolbar back button behaviour
         toolbarBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,13 +192,14 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
                 setButtonGenerating();
             }
         });
-        //Added Some Manually
-//        imageUrls.add(Uri.parse("http://192.168.0.105:8000/image-optimization/get_bg_removed_images/1.png"));
-//        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/893/200/200.jpg?hmac=MKUqbcyRrvAYoTmgHo74fEI3o9V4CH2kBrvWfmHkr7U"));
-//        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/670/200/300.jpg?grayscale&hmac=OfelnBKL5NEzJJiK2lCpkJww2xtIQZAsfyI5yWniBpo"));
-//        imageUrls.add(Uri.parse("https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI"));
-//        imageUrls.add(Uri.parse("http://192.168.0.105:8000/image-optimization/get_bg_removed_images/1.png"));
+        //Button Download All Bg Removed Images
+        downLoadAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backgroundRemovedImageAdapter.downloadAllImages();
 
+            }
+        });
 
     }
 

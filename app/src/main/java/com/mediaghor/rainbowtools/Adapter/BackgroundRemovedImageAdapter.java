@@ -27,6 +27,7 @@ import com.mediaghor.rainbowtools.R;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<BackgroundRemovedImageAdapter.ViewHolder> {
@@ -90,6 +91,8 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
         return imageUrls.size();
     }
 
+
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imv_listMedia;
         ProgressBar progressBar;
@@ -104,16 +107,21 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
     }
 
     // Method to download the image
-    private void downloadImage(Uri imageUrl, ViewHolder holder) {
-        Glide.with(holder.imv_listMedia.getContext())
+    public void downloadAllImages() {
+        for (Uri imageUrl : imageUrls) {
+            downloadImage(imageUrl, null); // Pass null if no UI updates required
+        }
+    }
+
+    public void downloadImage(Uri imageUrl, ViewHolder holder) {
+        Glide.with(context)
                 .asBitmap()
                 .load(imageUrl)
                 .into(new CustomTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         try {
-                            // Save the image to local storage
-                            String fileName = "Image_" + System.currentTimeMillis() + ".png";
+                            String fileName = "Image_Rainbow_Tools" + System.currentTimeMillis() + ".png";
                             OutputStream outputStream;
 
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
@@ -148,8 +156,11 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
 
                     @Override
                     public void onLoadCleared(@Nullable Drawable placeholder) {
-                        // Handle placeholder logic if needed
+                        if (holder != null) {
+                            holder.progressBar.setVisibility(View.GONE); // Ensure progress bar hides
+                        }
                     }
                 });
     }
+
 }

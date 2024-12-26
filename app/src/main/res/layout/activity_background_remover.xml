@@ -63,7 +63,10 @@
         android:layout_height="match_parent"
         android:layout_below="@id/appBarLayout"
         android:layout_above="@id/appBarLayout_2"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/bg1">
+
+
 
         <LinearLayout
             android:layout_width="0dp"
@@ -106,46 +109,82 @@
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:background="@color/white">
-            <FrameLayout
-                android:layout_width="150dp"
-                android:layout_height="56dp"
-                android:layout_gravity="center">
 
-                <!-- The Material Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/generate_button"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:enabled="false"
-                    android:backgroundTint="#808080"
-                    android:text="Generate"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    style="@style/Widget.MaterialComponents.Button" />
 
-                <!-- The Progress Bar -->
-                <ProgressBar
-                    android:id="@+id/progress_indicator"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    android:indeterminate="true"
-                    style="?android:attr/progressBarStyleLarge" />
-
-            </FrameLayout>
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/choose_images"
-                android:layout_width="90dp"
+            <LinearLayout
+                android:paddingRight="20dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:padding="8dp"
-                android:scaleType="centerCrop"
-                android:layout_marginRight="20dp"
-                android:src="@drawable/choose_images"
-                android:layout_gravity="end"/>
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:layout_width="102dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:shimmer_auto_start="true"
+                    app:shimmer_duration="1500">
+
+                    <!-- Button for Download -->
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_download_all_bg_removed_images"
+                        android:layout_width="102dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ripple_button_effect"
+                        android:drawableStart="@drawable/baseline_download_for_offline_24"
+                        android:elevation="4dp"
+                        android:paddingHorizontal="4dp"
+                        android:paddingVertical="4dp"
+                        android:text="Download All"
+                        android:textColor="@color/black"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </com.facebook.shimmer.ShimmerFrameLayout>
+                <FrameLayout
+                    android:layout_width="110dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
+
+                    <!-- The Material Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/generate_button"
+                        android:layout_width="110dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:enabled="false"
+                        android:backgroundTint="#808080"
+                        android:text="Generate"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:padding="8dp"
+                        style="@style/Widget.MaterialComponents.Button" />
+
+                    <!-- The Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/progress_indicator"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        android:indeterminate="true"
+                        style="?android:attr/progressBarStyleLarge" />
+
+                </FrameLayout>
+                <androidx.appcompat.widget.AppCompatImageButton
+
+
+                    android:id="@+id/choose_images"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@android:color/transparent"
+                    android:padding="6dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/choose_images"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 

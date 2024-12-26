@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="170dp"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardCornerRadius="6dp"
@@ -17,6 +17,7 @@
 
         <!-- FrameLayout for ImageView and ProgressBar -->
         <FrameLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp">
@@ -29,7 +30,8 @@
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
-                android:src="@drawable/emtyimgbgrmv" />
+                android:src="@drawable/emtyimgbgrmv"
+                android:background="@drawable/bg_template"/>
 
             <!-- ProgressBar centered over the ImageView -->
             <ProgressBar

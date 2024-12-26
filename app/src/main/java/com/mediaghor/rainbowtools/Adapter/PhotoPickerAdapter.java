@@ -64,30 +64,32 @@ public class PhotoPickerAdapter extends RecyclerView.Adapter<PhotoPickerAdapter.
             if (bitmap != null) {
                 int originalWidth = bitmap.getWidth();
                 int originalHeight = bitmap.getHeight();
-
-                // Calculate aspect ratio
                 float aspectRatio = (float) originalHeight / originalWidth;
 
-                // Log the aspect ratio and image dimensions for debugging
+                // Convert 170dp to pixels
+                float density = holder.imv_listMedia.getContext().getResources().getDisplayMetrics().density;
+                int fixedWidthInDp = 170;  // 170dp
+                int fixedWidthInPx = (int) (fixedWidthInDp * density);  // Convert dp to px
 
-
-
-                // Use ViewTreeObserver to adjust height dynamically after layout is measured
                 holder.imv_listMedia.getViewTreeObserver().addOnPreDrawListener(() -> {
-                    int imageViewWidth = holder.imv_listMedia.getWidth();
-                    if (imageViewWidth > 0) {
-                        // Calculate the dynamic height based on the aspect ratio
-                        int newHeight = (int) (imageViewWidth * aspectRatio);
-                        ViewGroup.LayoutParams params = holder.imv_listMedia.getLayoutParams();
-                        params.height = newHeight;
-                        holder.imv_listMedia.setLayoutParams(params);
+                    // Set the width to the fixed width
+                    ViewGroup.LayoutParams params = holder.imv_listMedia.getLayoutParams();
+                    params.width = fixedWidthInPx;  // Set the fixed width in pixels
 
-                        // Log the new height for debugging
-                    }
+                    // Calculate the height based on the aspect ratio
+                    int newHeight = (int) (fixedWidthInPx * aspectRatio);
+                    params.height = newHeight;  // Set the calculated height based on aspect ratio
+
+                    holder.imv_listMedia.setLayoutParams(params);
+
+                    // Log the new width and height for debugging
+                    Log.d("width", String.valueOf(fixedWidthInPx));
+                    Log.d("height", String.valueOf(newHeight));
+
                     return true;
                 });
-
             }
+
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -51,7 +51,7 @@ public class ImageUploadHelper {
                     List<String> imageNames = response.body().getImageNames();
                     List<Uri> imageUrls = new ArrayList<>();
                     for (String imageName : imageNames) {
-                        imageUrls.add(Uri.parse("http://192.168.0.105:8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
+                        imageUrls.add(Uri.parse("http://192.168.0.106:8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
                     }
                     callback.onImageUploadSuccess(imageUrls);
                 } else {
