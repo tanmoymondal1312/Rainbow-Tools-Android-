@@ -32,10 +32,12 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.button.MaterialButton;
 import com.mediaghor.rainbowtools.Adapter.BackgroundRemovedImageAdapter;
 import com.mediaghor.rainbowtools.Adapter.PhotoPickerAdapter;
 import com.mediaghor.rainbowtools.Helpers.ImageUploadHelper;
+import com.mediaghor.rainbowtools.OthersClasses.ProcessingDialog;
 import com.mediaghor.rainbowtools.R;
 
 import java.util.ArrayList;
@@ -43,15 +45,22 @@ import java.util.List;
 
 public class BackgroundRemoverActivity extends AppCompatActivity {
     //Variables
-    ImageButton toolbarBackBtn,chooseFilesBtn;
-    AppCompatButton downLoadAll;
-    RecyclerView rv_pickImages,rv_bgRemovedImages;
-    MaterialButton generateButton;
-    ProgressBar progressIndicator;
-    List<Uri> imageUrls = new ArrayList<>();
+
+    //Components
+    private ImageButton toolbarBackBtn,chooseFilesBtn;
+    private AppCompatButton downLoadAll;
+    private RecyclerView rv_pickImages,rv_bgRemovedImages;
+    private MaterialButton generateButton;
+    private ProgressBar progressIndicator;
+    LottieAnimationView lottieAnimationView ;
+
+    //Data
+    private List<Uri> imageUrls = new ArrayList<>();
     public List<Uri> selectedUris;
-    LinearLayout ParentOfBody;
+
+    //Manual Variables
     BackgroundRemovedImageAdapter backgroundRemovedImageAdapter;
+    ProcessingDialog processingDialog;
 
 
 
@@ -62,9 +71,8 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5),uris ->{
                 if(uris != null)
                 {
-                    ParentOfBody.setBackground(ContextCompat.getDrawable(BackgroundRemoverActivity.this, R.drawable.layout_bg_1));
                     selectedUris = uris;
-                    Toast.makeText(this, String.valueOf(uris.size()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, uris.size() + " images selected", Toast.LENGTH_SHORT).show();
                     PhotoPickerAdapter adapter =  new PhotoPickerAdapter(uris);
                     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
                     rv_pickImages.setLayoutManager(layoutManager);
@@ -75,17 +83,14 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             });
 
     private void uploadImagesToBackend(List<Uri> uris) {
-        // Create an instance of ImageUploadHelper
         ImageUploadHelper imageUploadHelper = new ImageUploadHelper(this);
-
-        // Call the uploadImages method
         imageUploadHelper.uploadImages(uris, new ImageUploadHelper.ImageUploadCallback() {
             @Override
             public void onImageUploadSuccess(List<Uri> imageUrls) {
                 // Handle success: the imageUrls list contains the processed image URLs
                 BackgroundRemoverActivity.this.imageUrls = imageUrls;
                 Toast.makeText(BackgroundRemoverActivity.this, "Images processed successfully", Toast.LENGTH_SHORT).show();
-
+                setAllDownloadButtonVisible();
                 AddingBgRemovedImages();
                 setButtonDisabled();
             }
@@ -100,42 +105,46 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         });
     }
 
-    //Download All Recyclerview processed images
-//    private void downloadAllImages() {
-//
-//    }
 
-
-
-    //Generate Button States
+    //Button States
+    void setAllDownloadButtonInvisible() {
+        downLoadAll.setVisibility(View.INVISIBLE); // Hide the button
+        lottieAnimationView.setVisibility(View.GONE); // Hide animation if visible
+    }
+    void setAllDownloadButtonVisible() {
+        downLoadAll.setVisibility(View.VISIBLE); // Show the button
+//        downLoadAll.setText("Download All"); // Reset the text if modified earlier
+//        lottieAnimationView.setVisibility(View.GONE); // Ensure animation is hidden
+    }
+    void setAnimationVisible() {
+        downLoadAll.setVisibility(View.INVISIBLE);
+        lottieAnimationView.setVisibility(View.VISIBLE); // Show animation
+        lottieAnimationView.playAnimation(); // Start the animation
+    }
     // State 1: Disabled
     private void setButtonDisabled() {
         generateButton.setEnabled(false);
         generateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.gray));
         generateButton.setText("Generate");
-        findViewById(R.id.progress_indicator).setVisibility(View.GONE); // Hide progress bar
+        progressIndicator.setVisibility(View.GONE); // Hide progress bar
     }
-
     // State 2: Clickable
     private void setButtonClickable() {
         generateButton.setEnabled(true);
         generateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.teal_700));
         generateButton.setText("Generate");
-        findViewById(R.id.progress_indicator).setVisibility(View.GONE); // Hide progress bar
+        progressIndicator.setVisibility(View.GONE); // Hide progress bar
     }
-
     // State 3: Generating
     private void setButtonGenerating() {
         generateButton.setEnabled(false);
         generateButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.teal_700));
         generateButton.setText(""); // Clear text
-        findViewById(R.id.progress_indicator).setVisibility(View.VISIBLE); // Show progress bar
-
-
-
+        progressIndicator.setVisibility(View.VISIBLE); // Show progress bar
     }
     //Function To Add The Images From Response to adapter
     private void AddingBgRemovedImages(){
+        processingDialog.stopProcessingDialog();
         backgroundRemovedImageAdapter = new BackgroundRemovedImageAdapter(imageUrls, this);
         LinearLayoutManager layoutManager_2 = new LinearLayoutManager(this);
         rv_bgRemovedImages.setLayoutManager(layoutManager_2);
@@ -167,8 +176,9 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         rv_bgRemovedImages = findViewById(R.id.recycler_for_processed_images);
         generateButton = findViewById(R.id.generate_button);
         progressIndicator = findViewById(R.id.progress_indicator);
-        ParentOfBody = findViewById(R.id.contentLayout);
         downLoadAll = findViewById(R.id.btn_download_all_bg_removed_images);
+        lottieAnimationView = findViewById(R.id.lottie_animation_view_id);
+        processingDialog = new ProcessingDialog(this);
         //Toolbar back button behaviour
         toolbarBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,6 +198,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         generateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                processingDialog.startProcessingDialog();
                 uploadImagesToBackend(selectedUris);
                 setButtonGenerating();
             }
@@ -196,11 +207,12 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         downLoadAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setAnimationVisible();
                 backgroundRemovedImageAdapter.downloadAllImages();
-
             }
         });
-
+        //Set Animation And All Download Button Invisible
+        setAllDownloadButtonInvisible();
     }
 
 }

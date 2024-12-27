@@ -66,33 +66,48 @@
         android:orientation="horizontal"
         android:background="@drawable/bg1">
 
-
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <FrameLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_for_processed_images"
+            android:layout_below="@id/appBarLayout"
+            android:layout_above="@id/appBarLayout_2"
+            android:background="@drawable/layout_bg_1">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/recycler_for_selected_images_to_remove_bg" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_for_selected_images"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/recycler_for_selected_images_to_remove_bg" />
-        </LinearLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_for_processed_images"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:listitem="@layout/recycler_for_selected_images_to_remove_bg" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_for_selected_images"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:listitem="@layout/recycler_for_selected_images_to_remove_bg" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </FrameLayout>
+
+
+
     </LinearLayout>
 
     <!-- Second Toolbar (Bottom Toolbar) -->
@@ -116,16 +131,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:gravity="start">
+                android:gravity="center_vertical">
 
-                <com.facebook.shimmer.ShimmerFrameLayout
-                    android:layout_width="102dp"
+                <FrameLayout
+                    android:layout_marginRight="5dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:shimmer_auto_start="true"
-                    app:shimmer_duration="1500">
+                    android:layout_gravity="center">
 
-                    <!-- Button for Download -->
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottie_animation_view_id"
+                        android:layout_width="100dp"
+                        android:layout_height="45dp"
+                        app:lottie_fileName="downloading.json"
+                        android:layout_gravity="center"
+                        app:lottie_autoPlay="false"/>
+
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_download_all_bg_removed_images"
                         android:layout_width="102dp"
@@ -136,16 +157,16 @@
                         android:paddingHorizontal="4dp"
                         android:paddingVertical="4dp"
                         android:text="Download All"
-                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
                         android:textSize="11sp"
                         android:textStyle="bold" />
-                </com.facebook.shimmer.ShimmerFrameLayout>
+                </FrameLayout>
                 <FrameLayout
                     android:layout_width="110dp"
                     android:layout_height="56dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp">
+                    android:layout_marginLeft="10dp">
 
                     <!-- The Material Button -->
                     <com.google.android.material.button.MaterialButton
@@ -161,7 +182,6 @@
                         android:padding="8dp"
                         style="@style/Widget.MaterialComponents.Button" />
 
-                    <!-- The Progress Bar -->
                     <ProgressBar
                         android:id="@+id/progress_indicator"
                         android:layout_width="36dp"
@@ -174,14 +194,13 @@
                 </FrameLayout>
                 <androidx.appcompat.widget.AppCompatImageButton
 
-
+                    android:layout_marginLeft="15dp"
                     android:id="@+id/choose_images"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:background="@android:color/transparent"
                     android:padding="6dp"
                     android:scaleType="centerCrop"
-                    android:layout_marginRight="20dp"
                     android:src="@drawable/choose_images"
                     android:layout_gravity="center"/>
             </LinearLayout>
