@@ -16,14 +16,16 @@ public class MainActivity extends AppCompatActivity {
     TabLayout tab;
     ViewPager viewPager;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "WrongViewCast"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.MainActivity);
+
         Toolbar toolbar;
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.tool_bar_global);
         setSupportActionBar(toolbar);
 
         //Set The Tab Layout And Viewpager For Categories

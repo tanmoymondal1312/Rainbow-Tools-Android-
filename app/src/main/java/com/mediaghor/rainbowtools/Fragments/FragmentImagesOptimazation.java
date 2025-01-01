@@ -34,20 +34,19 @@ public class FragmentImagesOptimazation extends Fragment {
         // Setting up RecyclerView
         RecyclerView recyclerView = rootView.findViewById(R.id.use_now_recycler_view_id);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        Log.d("jjj","Niceeee");
         // Preparing data for the adapter
         List<CardItemsModel> cardItemsList = new ArrayList<>();
         cardItemsList.add(new CardItemsModel(
                 "Background Remover",
-                "android.resource://" + requireContext().getPackageName() + "/" + R.raw.card1bgremover
+                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.bg_remover
         ));
         cardItemsList.add(new CardItemsModel(
                 "Photo Optimizer",
-                "android.resource://" + requireContext().getPackageName() + "/" + R.raw.imageresulationincreser
+                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.bg_remover
         ));
         cardItemsList.add(new CardItemsModel(
                 "Image Resizer",
-                "android.resource://" + requireContext().getPackageName() + "/" + R.raw.card3imageresizer
+                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.bg_remover
         ));
 
         // Setting adapter

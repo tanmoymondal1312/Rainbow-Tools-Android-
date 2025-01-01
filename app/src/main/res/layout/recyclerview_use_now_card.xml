@@ -1,104 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_5sdp"
+    android:background="@color/white"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    app:cardUseCompatPadding="true"
+    android:id="@+id/parent_card"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
-        android:gravity="center_horizontal"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:orientation="vertical"
+        android:gravity="center"
         android:background="@color/white">
 
-
         <androidx.cardview.widget.CardView
-            android:id="@+id/parent_card_id"
-            android:background="@color/white"
-            android:layout_width="160dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true">
-
-
-
-
-                <LinearLayout
-                    android:background="@color/white"
-                    android:paddingBottom="6dp"
-                    android:paddingRight="6dp"
-                    android:paddingLeft="6dp"
-                    android:paddingTop="6dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-
-                    <androidx.cardview.widget.CardView
-
-                        android:layout_gravity="center_horizontal"
-                        android:layout_width="135dp"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="6dp"
-                        app:cardElevation="0dp">
-
-                        <VideoView
-                            android:id="@+id/video_view"
-                            android:layout_width="135dp"
-                            android:layout_height="200dp"
-                            app:resize_mode="fill"/>
-
-
-                    </androidx.cardview.widget.CardView>
-
-                    <TextView
-                        android:id="@+id/tool_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="6dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center"
-                        android:letterSpacing="0.1"
-                        android:lineSpacingExtra="2dp"
-                        android:shadowColor="#000000"
-                        android:shadowDx="1"
-                        android:shadowDy="1"
-                        android:shadowRadius="1"
-                        android:text="Background Remover"
-                        android:textColor="#632BC6"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:layout_marginTop="3dp"
-                        android:id="@+id/bg_remover_use_now__btn"
-                        android:layout_width="76dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@drawable/button_in_card_use_now_bg"
-                        android:shadowColor="#A8A8A8"
-                        android:shadowDx="2"
-                        android:shadowDy="5"
-                        android:shadowRadius="8"
-                        android:text="Use Now"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
+            app:cardElevation="6dp">
+            <ImageView
+                android:id="@+id/tool_icon_img_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bg_remover"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                tools:ignore="MissingConstraints" />
         </androidx.cardview.widget.CardView>
+
+
+        <TextView
+            android:id="@+id/tool_name_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:padding="4dp"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>

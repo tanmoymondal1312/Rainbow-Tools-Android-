@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -52,7 +51,6 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
         Uri imageUrl = imageUrls.get(position);
 
         // Show loading animation
-        holder.progressBar.setVisibility(View.VISIBLE);
 
         // Load the image
         Glide.with(holder.imv_listMedia.getContext())
@@ -61,8 +59,6 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
                 .into(new CustomTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        holder.progressBar.setVisibility(View.GONE); // Hide progress bar when loaded
-
                         // Calculate height based on a fixed width
                         int fixedWidth = holder.imv_listMedia.getWidth();
                         int dynamicHeight = (int) ((float) resource.getHeight() / resource.getWidth() * fixedWidth);
@@ -77,9 +73,7 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
                     }
 
                     @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                        holder.progressBar.setVisibility(View.GONE); // Ensure progress bar hides
-                    }
+                    public void onLoadCleared(@Nullable Drawable placeholder) {}
                 });
 
         // Handle image download on button click
@@ -95,13 +89,11 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imv_listMedia;
-        ProgressBar progressBar;
         AppCompatButton btn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imv_listMedia = itemView.findViewById(R.id.rv_bg_removed_image);
-            progressBar = itemView.findViewById(R.id.image_loading_progress); // Add a ProgressBar in your layout
             btn = itemView.findViewById(R.id.btn_download);
         }
     }
@@ -157,7 +149,6 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
                     @Override
                     public void onLoadCleared(@Nullable Drawable placeholder) {
                         if (holder != null) {
-                            holder.progressBar.setVisibility(View.GONE); // Ensure progress bar hides
                         }
                     }
                 });

@@ -8,24 +8,47 @@
     android:background="@color/white"
     tools:context=".Fragments.FragmentPopular">
 
-    <ImageView
-        android:src="@drawable/choose_images"
-        android:id="@+id/imgTest"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_gravity="center_horizontal"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <!-- Wrapping TextViews in a LinearLayout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/urlText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Define User Favourite items"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:longClickable="true"/>
+            <TextView
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="400dp"
+                android:text="Define User Favourite items"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:longClickable="true" />
 
+            <TextView
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="400dp"
+                android:text="Define User SECONF Favourite items"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:longClickable="true" />
 
+            <TextView
+                android:layout_width="@dimen/_300sdp"
+                android:layout_height="400dp"
+                android:text="Define User tHIRD Favourite items"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:longClickable="true" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
+

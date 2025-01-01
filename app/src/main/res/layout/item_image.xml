@@ -1,0 +1,42 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_1sdp"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_130sdp"
+        android:scaleType="centerCrop"/>
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="@dimen/_2sdp"/>
+
+    <FrameLayout
+        android:id="@+id/frame_layout_of_img_selected_enable"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_130sdp">
+
+        <TextView
+            android:id="@+id/item_image_text_view"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:text=""
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/round_blue_bg"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+
+
+
+
+</FrameLayout>

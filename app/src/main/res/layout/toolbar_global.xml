@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_60sdp"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:id="@+id/tool_bar_global">
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="@dimen/_13sdp"
+                android:src="@drawable/toolbaricon" />
+            <ImageView
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginLeft="@dimen/_99sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:src="@drawable/rainbowtoolicon" />
+        </FrameLayout>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
+        android:gravity="end|bottom">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/angry_btn"
+            android:layout_width="@dimen/_68sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:background="@drawable/buttonshape1"
+            android:gravity="center"
+            android:shadowColor="#A8A8A8"
+            android:shadowDx="2"
+            android:shadowDy="5"
+            android:shadowRadius="8"
+            android:text="Try PRO"
+            android:textAlignment="center"
+            android:textColor="#EEED8C"
+            android:textSize="@dimen/_10sdp" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="end|bottom">
+        <ImageView
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_33sdp"
+            android:src="@drawable/baseline_search_24" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="start|bottom">
+        <ImageView
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_33sdp"
+            android:src="@drawable/savedicon" />
+    </RelativeLayout>
+</LinearLayout>

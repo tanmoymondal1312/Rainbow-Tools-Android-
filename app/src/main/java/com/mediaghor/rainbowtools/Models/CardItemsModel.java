@@ -2,12 +2,12 @@ package com.mediaghor.rainbowtools.Models;
 
 public class CardItemsModel {
     private String text;      // Text description or title
-    private String videoUri;  // URI or path of the video
+    private String imageUri;  // URI or path of the video
 
     // Constructor
-    public CardItemsModel(String text, String videoUri) {
+    public CardItemsModel(String text, String imageUri) {
         this.text = text;
-        this.videoUri = videoUri;
+        this.imageUri = imageUri;
     }
 
     // Getter and Setter for text
@@ -19,12 +19,12 @@ public class CardItemsModel {
         this.text = text;
     }
 
-    // Getter and Setter for videoUri
-    public String getVideoUri() {
-        return videoUri;
+    // Getter and Setter for imageUri
+    public String getImageUri() {
+        return imageUri;
     }
 
-    public void setVideoUri(String videoUri) {
-        this.videoUri = videoUri;
+    public void setImageUri(String videoUri) {
+        this.imageUri = videoUri;
     }
 }

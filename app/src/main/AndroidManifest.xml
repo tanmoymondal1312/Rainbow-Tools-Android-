@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- Permissions for reading images -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission
         android:name="android.permission.READ_MEDIA_IMAGES"
         tools:targetApi="33" />
@@ -22,17 +20,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         tools:targetApi="31">
-
+        <activity
+            android:name=".Activities.AllimagesActivity"
+            android:theme="@style/Theme.RainbowTools"
+            android:exported="false" />
         <activity
             android:name=".Activities.BackgroundRemoverActivity"
             android:exported="false"
-            android:theme="@style/Base.Theme.RainbowTools">
-        </activity>
-        <!-- MainActivity -->
+            android:theme="@style/Theme.RainbowTools"></activity>
         <activity
             android:name=".Activities.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.MainActivity" >
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

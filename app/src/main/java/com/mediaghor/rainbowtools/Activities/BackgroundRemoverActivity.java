@@ -3,8 +3,12 @@ package com.mediaghor.rainbowtools.Activities;
 import static com.mediaghor.rainbowtools.R.drawable.*;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 
@@ -35,8 +40,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.button.MaterialButton;
 import com.mediaghor.rainbowtools.Adapter.BackgroundRemovedImageAdapter;
+
 import com.mediaghor.rainbowtools.Adapter.PhotoPickerAdapter;
+import com.mediaghor.rainbowtools.Helpers.ImagePermissionHandler;
 import com.mediaghor.rainbowtools.Helpers.ImageUploadHelper;
+import android.Manifest;
+
 import com.mediaghor.rainbowtools.OthersClasses.ProcessingDialog;
 import com.mediaghor.rainbowtools.R;
 
@@ -47,6 +56,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     //Variables
 
     //Components
+    Button click;
     private ImageButton toolbarBackBtn,chooseFilesBtn;
     private AppCompatButton downLoadAll;
     private RecyclerView rv_pickImages,rv_bgRemovedImages;
@@ -60,7 +70,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
     //Manual Variables
     BackgroundRemovedImageAdapter backgroundRemovedImageAdapter;
-    ProcessingDialog processingDialog;
+//    ProcessingDialog processingDialog;
 
 
 
@@ -144,7 +154,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     }
     //Function To Add The Images From Response to adapter
     private void AddingBgRemovedImages(){
-        processingDialog.stopProcessingDialog();
+//        processingDialog.stopProcessingDialog();
         backgroundRemovedImageAdapter = new BackgroundRemovedImageAdapter(imageUrls, this);
         LinearLayoutManager layoutManager_2 = new LinearLayoutManager(this);
         rv_bgRemovedImages.setLayoutManager(layoutManager_2);
@@ -163,56 +173,108 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        //Set status bar Colors and behaviour
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getResources().getColor(android.R.color.darker_gray)); // Set to white background
+        window.setStatusBarColor(getResources().getColor(android.R.color.darker_gray)); // Set status bar color to white
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-
         toolbarBackBtn = findViewById(R.id.toolbar_back_btn);
-        chooseFilesBtn = findViewById(R.id.choose_images);
-        rv_pickImages = findViewById(R.id.recycler_for_selected_images);
-        rv_bgRemovedImages = findViewById(R.id.recycler_for_processed_images);
-        generateButton = findViewById(R.id.generate_button);
-        progressIndicator = findViewById(R.id.progress_indicator);
-        downLoadAll = findViewById(R.id.btn_download_all_bg_removed_images);
-        lottieAnimationView = findViewById(R.id.lottie_animation_view_id);
-        processingDialog = new ProcessingDialog(this);
-        //Toolbar back button behaviour
+        click = findViewById(R.id.click);
+
+        ActivityResultLauncher<Intent> selectImagesLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        List<String> selectedImages = result.getData().getStringArrayListExtra(AllimagesActivity.SELECTED_IMAGES_KEY);
+                        if (selectedImages != null && !selectedImages.isEmpty()) {
+                            Toast.makeText(this, "Selected Images: " + selectedImages, Toast.LENGTH_LONG).show();
+                            // Handle selected images here
+                        }
+                    }
+                }
+        );
+
+        // Handle click event
+        click.setOnClickListener(v -> {
+            // Request image permissions
+            //Log.d("TAG2", "Request Done");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // For Android 13 (API 33) and above
+                // Check if READ_MEDIA_IMAGES permission is granted
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                    // Request permission for images
+                    ImagePermissionHandler.requestImagePermission(BackgroundRemoverActivity.this);
+                } else {
+                    // Permission already granted, proceed with accessing images
+                    Toast.makeText(this, "Permission already granted", Toast.LENGTH_SHORT).show();
+                    // Launch AllimagesActivity
+                    Intent intent = new Intent(BackgroundRemoverActivity.this, AllimagesActivity.class);
+                    Log.d("TAG2", "Intent set");
+                    selectImagesLauncher.launch(intent);
+                    Log.d("TAG2", "Intent launched");
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // For Android 8 to Android 12 (API 26-32)
+                // Check if READ_EXTERNAL_STORAGE permission is granted
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    // Request permission for external storage
+                    ImagePermissionHandler.requestImagePermission(BackgroundRemoverActivity.this);
+                } else {
+                    // Permission already granted, proceed with accessing images
+                    Toast.makeText(this, "Permission already granted", Toast.LENGTH_SHORT).show();
+                    // Launch AllimagesActivity
+                    Intent intent = new Intent(BackgroundRemoverActivity.this, AllimagesActivity.class);
+                    Log.d("TAG2", "Intent set");
+                    selectImagesLauncher.launch(intent);
+                    Log.d("TAG2", "Intent launched");
+                }
+            } else {
+                // For devices below Android 8, no need to request permission
+                Toast.makeText(this, "No permission needed for devices below Android 8", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         toolbarBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        //Select images
-       chooseFilesBtn.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               pickMultipleMedia.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.
-                       PickVisualMedia.ImageOnly.INSTANCE).build());
-           }
-       });
-       //Button Generate
-        generateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                processingDialog.startProcessingDialog();
-                uploadImagesToBackend(selectedUris);
-                setButtonGenerating();
-            }
-        });
-        //Button Download All Bg Removed Images
-        downLoadAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setAnimationVisible();
-                backgroundRemovedImageAdapter.downloadAllImages();
-            }
-        });
-        //Set Animation And All Download Button Invisible
-        setAllDownloadButtonInvisible();
+//        chooseFilesBtn = findViewById(R.id.choose_images);
+//        rv_pickImages = findViewById(R.id.recycler_for_selected_images);
+//        rv_bgRemovedImages = findViewById(R.id.recycler_for_processed_images);
+//        generateButton = findViewById(R.id.generate_button);
+//        progressIndicator = findViewById(R.id.progress_indicator);
+//        downLoadAll = findViewById(R.id.btn_download_all_bg_removed_images);
+//        lottieAnimationView = findViewById(R.id.lottie_animation_view_id);
+        //Toolbar back button behaviour
+
+//        //Select images
+//        chooseFilesBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                pickMultipleMedia.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.
+//                        PickVisualMedia.ImageOnly.INSTANCE).build());
+//            }
+//        });
+//        //Button Generate
+//        generateButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                processingDialog = new ProcessingDialog(BackgroundRemoverActivity.this);
+////                processingDialog.startProcessingDialog();
+//                uploadImagesToBackend(selectedUris);
+//                setButtonGenerating();
+//            }
+//        });
+//        //Button Download All Bg Removed Images
+//        downLoadAll.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setAnimationVisible();
+//                backgroundRemovedImageAdapter.downloadAllImages();
+//            }
+//        });
+//        //Set Animation And All Download Button Invisible
+//        setAllDownloadButtonInvisible();
     }
 
 }

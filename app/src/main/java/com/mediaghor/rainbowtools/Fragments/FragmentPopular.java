@@ -53,33 +53,6 @@ public class FragmentPopular extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_popular, container, false);
 
-        String url = "http://192.168.0.105:8000/image-optimization/get_bg_removed_images/2.png";
-        imageView = view.findViewById(R.id.imgTest);
-        UrlText = view.findViewById(R.id.urlText);
-
-// Set the URL text to the TextView
-        UrlText.setText(url);
-
-// Load the image into ImageView using Glide with logging
-        Glide.with(view.getContext())
-                .load(url)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.d("Glide", "Error loading image: " + (e != null ? e.getMessage() : "Unknown error"));
-                        return false; // Let Glide handle the error
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        Log.d("Glide", "Image loaded successfully");
-                        return false; // Allow Glide to handle the resource
-                    }
-                })
-                .into(imageView);
-
-// Log the URL to ensure it's correct
-        Log.d("Glide", "Loading image from URL: " + url);
 
 
 
