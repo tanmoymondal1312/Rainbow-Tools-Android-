@@ -74,4 +74,51 @@ public class ButtonAnimationManager {
             Log.e("GeneratingButtonAnimation", "Context is not an instance of Activity!");
         }
     }
+    public void DownloadAllImagesAnimation(String state){
+        if (context instanceof Activity) {
+            LottieAnimationView download,downloading;
+            download = activity.findViewById(R.id.lottie_anim_download_in_bottom_toolbar_bgrl);
+            downloading = activity.findViewById(R.id.lottie_anim_downloading_in_bottom_toolbar_bgrl);
+            switch (state){
+                case "download":
+                    downloading.setVisibility(View.GONE);
+                    downloading.setClickable(false);
+                    downloading.setEnabled(false);
+
+                    download.setVisibility(View.VISIBLE);
+                    download.setClickable(true);
+                    download.setEnabled(true);
+                    download.loop(true);
+                    download.setAlpha(1f);
+                    download.playAnimation();
+                    break;
+                case "downloading":
+                    download.setVisibility(View.GONE);
+                    download.setClickable(false);
+                    download.setEnabled(false);
+
+                    downloading.setVisibility(View.VISIBLE);
+                    downloading.setClickable(true);
+                    downloading.setEnabled(true);
+                    downloading.loop(false);
+                    downloading.playAnimation();
+                    break;
+                case "disable":
+                    downloading.setVisibility(View.GONE);
+                    downloading.setClickable(false);
+                    downloading.setEnabled(false);
+
+                    download.setVisibility(View.VISIBLE);
+                    download.setClickable(false);
+                    download.setEnabled(false);
+                    download.setAlpha(0.5f);
+                    download.loop(false);
+                    break;
+
+            }
+        }
+        else {
+            Log.e("GeneratingButtonAnimation", "Context is not an instance of Activity!");
+        }
+    }
 }

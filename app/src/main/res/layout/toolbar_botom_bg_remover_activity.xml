@@ -9,8 +9,28 @@
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
-
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center">
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_gravity="center"
+                android:id="@+id/lottie_anim_download_in_bottom_toolbar_bgrl"
+                android:layout_width="@dimen/_110sdp"
+                android:layout_height="@dimen/_110sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:lottie_fileName="download.json"/>
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_gravity="center"
+                android:id="@+id/lottie_anim_downloading_in_bottom_toolbar_bgrl"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_135sdp"
+                app:lottie_fileName="downloading.json"/>
+        </FrameLayout>
     </RelativeLayout>
 
     <RelativeLayout

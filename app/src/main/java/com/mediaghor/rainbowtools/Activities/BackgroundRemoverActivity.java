@@ -42,6 +42,7 @@ import com.mediaghor.rainbowtools.Helpers.ImagePermissionHandler;
 
 import com.mediaghor.rainbowtools.Helpers.ImageUploadHelper;
 import com.mediaghor.rainbowtools.OthersClasses.ButtonAnimationManager;
+import com.mediaghor.rainbowtools.OthersClasses.CustomToastManager;
 import com.mediaghor.rainbowtools.OthersClasses.ProcessingDialog;
 import com.mediaghor.rainbowtools.R;
 
@@ -54,13 +55,9 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     //Variables
 
     //Components
-    Button click;
-    private ImageButton toolbarBackBtn,chooseFilesBtn;
-    private AppCompatButton downLoadAll;
+    private ImageButton toolbarBackBtn;
     private RecyclerView RV_SelectedImages,RV_ProcessedImages;
-    private MaterialButton generateButton;
-    private ProgressBar progressIndicator;
-    LottieAnimationView lottieAnimationSelectImages,lottieAnimationGenerateImages;
+    LottieAnimationView lottieAnimationSelectImages,lottieAnimationGenerateImages,download,downloading;
 
     //Data
     private ArrayList<Uri> imageUrls = new ArrayList<>();
@@ -71,6 +68,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> selectImagesLauncher;
     ButtonAnimationManager buttonAnimationManager;
     ProcessingDialog processingDialog;
+    CustomToastManager customToastManager;
 
 
 
@@ -90,7 +88,6 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
                         // Switch back to the UI thread for UI updates
                         mainThreadHandler.post(() -> {
                             BackgroundRemoverActivity.this.imageUrls = imageUrls;
-                            Toast.makeText(BackgroundRemoverActivity.this, "Images processed successfully", Toast.LENGTH_SHORT).show();
                             notifyImageUploadSuccess(); // Signal external components
                         });
                     }
@@ -141,7 +138,6 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         RV_ProcessedImages.setLayoutManager(layoutManager2);
         RV_ProcessedImages.setAdapter(adapter2);
-
     }
     private void SetSelectedImagesInRecycler(){
         buttonAnimationManager.SelectImageAnimation("unloop_animation");
@@ -151,8 +147,6 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         RV_SelectedImages.setLayoutManager(layoutManager);
         RV_SelectedImages.setAdapter(adapter);
         //Data Loaded In Ui And pause the loop
-
-
     }
 
     private void GetImagesFromDevices(){
@@ -206,14 +200,18 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         toolbarBackBtn = findViewById(R.id.toolbar_back_btn);
         lottieAnimationSelectImages = findViewById(R.id.animation_select_image_id_abgr);
         lottieAnimationGenerateImages = findViewById(R.id.generating_animation_id_bg_remover_layout);
+        download = findViewById(R.id.lottie_anim_download_in_bottom_toolbar_bgrl);
+        downloading = findViewById(R.id.lottie_anim_downloading_in_bottom_toolbar_bgrl);
         RV_SelectedImages = findViewById(R.id.rv_right_for_selected_image_bg_remover_activity);
         RV_ProcessedImages = findViewById(R.id.rv_left_for_bg_removed_images_bg_remover_activity);
         //Implementation Everything
         processingDialog = new ProcessingDialog(this);
         buttonAnimationManager = new ButtonAnimationManager(this);
+        customToastManager = new CustomToastManager(this);
         //On create animation and visibility components start
         buttonAnimationManager.SelectImageAnimation("loop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("disable");
+        buttonAnimationManager.DownloadAllImagesAnimation("disable");
 
 
         //Toolbar Back Button
@@ -231,20 +229,26 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
                 GetImagesFromDevices();
             }
         });
+        //Generate And Generating Animation Behaviour
         lottieAnimationGenerateImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 WorkWithFinalImages();
             }
         });
-
-
-
-
-
-
-
-
+        //Download All Downloading Behaviour
+        download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter2.DownloadAllImages();
+            }
+        });
+        downloading.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter2.DownloadAllImages();
+            }
+        });
 
 
 

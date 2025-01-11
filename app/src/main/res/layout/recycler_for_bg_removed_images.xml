@@ -46,7 +46,7 @@
                 android:id="@+id/btn_single_img_download_layout_bg_remover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#D5CBCB"
+                android:background="#D1E9FD"
                 android:paddingVertical="12dp"
                 android:paddingHorizontal="20dp"
                 android:text="Download"

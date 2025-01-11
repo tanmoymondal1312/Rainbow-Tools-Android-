@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +27,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
+import com.mediaghor.rainbowtools.OthersClasses.ButtonAnimationManager;
+import com.mediaghor.rainbowtools.OthersClasses.CustomToastManager;
 import com.mediaghor.rainbowtools.R;
 
 import java.io.File;
@@ -42,10 +46,16 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
     private final Context context;
     private final ArrayList<Uri> imageUrls;
     private final Map<Uri, File> loadedImagesCache = new HashMap<>();
+    ButtonAnimationManager buttonAnimationManager;
+    CustomToastManager customToastManager;
+
 
     public BackgroundRemovedImageAdapter(Context context, ArrayList<Uri> imageUrls) {
         this.context = context;
         this.imageUrls = imageUrls;
+        buttonAnimationManager = new ButtonAnimationManager(context);
+        customToastManager = new CustomToastManager(context);
+
     }
 
     @NonNull
@@ -57,11 +67,12 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if(imageUrls.size()>=1){
+            buttonAnimationManager.DownloadAllImagesAnimation("download");
+        }
         Uri imageUrl = imageUrls.get(position);
-
         // Show the ProgressBar initially
         holder.progressBar.setVisibility(View.VISIBLE);
-
         Glide.with(context)
                 .load(imageUrl.toString())                 // Load the image URL
                 .diskCacheStrategy(DiskCacheStrategy.ALL)  // Cache images for faster reloads
@@ -77,7 +88,6 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
                         holder.singleImageDownload.setVisibility(View.GONE);
                         return true;
                     }
-
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         holder.progressBar.setVisibility(View.GONE);
@@ -102,6 +112,8 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
                     downloadLoadedImage(imageUrl);
                     Log.d("Download", "Downloaded from URL: " + imageUrl);
                 }
+                customToastManager.showDownloadSuccessToast(R.drawable.download_success,"Successfully Downloaded The Image",2);
+
             }
         });
     }
@@ -191,10 +203,8 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
                     outputStream.write(buffer, 0, length);
                 }
             }
-
             // Notify the media scanner to index the new file
             scanFileForGallery(destFile);
-
             // Log the file's location for debugging
             Log.d("Download", "File saved to " + destFile.getAbsolutePath());
         } catch (IOException e) {
@@ -202,9 +212,32 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
             Log.e("Download", "Failed to save file", e);
         }
     }
+
     private void scanFileForGallery(File file) {
         MediaScannerConnection.scanFile(context, new String[]{file.getAbsolutePath()}, null,
                 (path, uri) -> Log.d("MediaScanner", "Scanned " + path + " -> URI: " + uri));
     }
 
+    public void DownloadAllImages() {
+        buttonAnimationManager.DownloadAllImagesAnimation("downloading");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Code to execute after 5 seconds
+                // For example, you can show a Toast or update the UI
+                customToastManager.showDownloadSuccessToast(R.drawable.download_success,"All Images Downloaded Successful",3);
+            }
+        }, 5000); // 5000 milliseconds = 5 seconds
+
+        for (Uri imageUrl : imageUrls) {
+            if (loadedImagesCache.containsKey(imageUrl)) {
+                // Download from the cached file
+                saveFileToDownloads(loadedImagesCache.get(imageUrl));
+                Log.d("DownloadAll", "Downloaded from cache: " + imageUrl);
+            } else {
+                // Download from Glide
+                downloadLoadedImage(imageUrl);
+            }
+        }
+    }
 }
