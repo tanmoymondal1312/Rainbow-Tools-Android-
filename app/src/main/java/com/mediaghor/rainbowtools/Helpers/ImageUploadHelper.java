@@ -30,7 +30,7 @@ public class ImageUploadHelper {
 
     public void uploadImages(List<Uri> uris, final ImageUploadCallback callback) {
         // Prepare the list of MultipartBody.Part for each image
-        List<MultipartBody.Part> parts = new ArrayList<>();
+        ArrayList<MultipartBody.Part> parts = new ArrayList<>();
         for (Uri uri : uris) {
             File file = new File(getRealPathFromURI(uri));
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
@@ -48,10 +48,10 @@ public class ImageUploadHelper {
             public void onResponse(Call<ImageUploadResponse> call, Response<ImageUploadResponse> response) {
                 if (response.isSuccessful()) {
                     // On success, get the image URLs from the response
-                    List<String> imageNames = response.body().getImageNames();
-                    List<Uri> imageUrls = new ArrayList<>();
+                    ArrayList<String> imageNames = (ArrayList<String>) response.body().getImageNames();
+                    ArrayList<Uri> imageUrls = new ArrayList<>();
                     for (String imageName : imageNames) {
-                        imageUrls.add(Uri.parse("http://192.168.0.106:8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
+                        imageUrls.add(Uri.parse("http://192.168.0.109:8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
                     }
                     callback.onImageUploadSuccess(imageUrls);
                 } else {
@@ -84,7 +84,7 @@ public class ImageUploadHelper {
 
     // Callback interface for uploading images
     public interface ImageUploadCallback {
-        void onImageUploadSuccess(List<Uri> imageUrls);
+        void onImageUploadSuccess(ArrayList<Uri> imageUrls);
         void onImageUploadFailure(String errorMessage);
     }
 }

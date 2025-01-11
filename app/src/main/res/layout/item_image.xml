@@ -25,14 +25,13 @@
 
         <TextView
             android:id="@+id/item_image_text_view"
-            android:layout_width="@dimen/_15sdp"
-            android:layout_height="@dimen/_15sdp"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
             android:text=""
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/white"
-            android:background="@drawable/round_blue_bg"
-            android:visibility="gone"/>
+            android:background="@drawable/round_blue_bg"/>
 
     </FrameLayout>
 

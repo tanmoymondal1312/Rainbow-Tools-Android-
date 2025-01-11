@@ -1,17 +1,16 @@
 package com.mediaghor.rainbowtools.Adapter;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,65 +18,92 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.mediaghor.rainbowtools.R;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<BackgroundRemovedImageAdapter.ViewHolder> {
-    private final List<Uri> imageUrls;
-    private final Context context; // For accessing resources and storage
 
-    public BackgroundRemovedImageAdapter(List<Uri> imageUrls, Context context) {
-        this.imageUrls = imageUrls;
+    private final Context context;
+    private final ArrayList<Uri> imageUrls;
+    private final Map<Uri, File> loadedImagesCache = new HashMap<>();
+
+    public BackgroundRemovedImageAdapter(Context context, ArrayList<Uri> imageUrls) {
         this.context = context;
+        this.imageUrls = imageUrls;
     }
 
     @NonNull
     @Override
-    public BackgroundRemovedImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View item = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recycler_for_bg_removed_images, parent, false);
-        return new ViewHolder(item);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.recycler_for_bg_removed_images, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BackgroundRemovedImageAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Uri imageUrl = imageUrls.get(position);
 
-        // Show loading animation
+        // Show the ProgressBar initially
+        holder.progressBar.setVisibility(View.VISIBLE);
 
-        // Load the image
-        Glide.with(holder.imv_listMedia.getContext())
-                .asBitmap()
-                .load(imageUrl)
-                .into(new CustomTarget<Bitmap>() {
+        Glide.with(context)
+                .load(imageUrl.toString())                 // Load the image URL
+                .diskCacheStrategy(DiskCacheStrategy.ALL)  // Cache images for faster reloads
+                .placeholder(R.drawable.emtyimgbgrmv)     // Placeholder while loading
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        // Calculate height based on a fixed width
-                        int fixedWidth = holder.imv_listMedia.getWidth();
-                        int dynamicHeight = (int) ((float) resource.getHeight() / resource.getWidth() * fixedWidth);
-
-                        // Set the calculated dimensions
-                        ViewGroup.LayoutParams layoutParams = holder.imv_listMedia.getLayoutParams();
-                        layoutParams.height = dynamicHeight;
-                        holder.imv_listMedia.setLayoutParams(layoutParams);
-
-                        // Set the image into the ImageView
-                        holder.imv_listMedia.setImageBitmap(resource);
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        if (e != null) {
+                            Log.e("GlideError", "Image load failed", e);
+                        }
+                        holder.progressBar.setVisibility(View.GONE);
+                        holder.imageView.setImageResource(R.drawable.server_error);
+                        holder.singleImageDownload.setVisibility(View.GONE);
+                        return true;
                     }
 
                     @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {}
-                });
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        holder.singleImageDownload.setVisibility(View.VISIBLE);
 
-        // Handle image download on button click
-        holder.btn.setOnClickListener(v -> downloadImage(imageUrl, holder));
+                        // Cache the image as a File
+                        cacheLoadedImage(imageUrl);
+                        return false;
+                    }
+                })
+                .into(holder.imageView);
+
+        holder.singleImageDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (loadedImagesCache.containsKey(imageUrl)) {
+                    // Download from the cached file
+                    saveFileToDownloads(loadedImagesCache.get(imageUrl));
+                    Log.d("Download", "Downloaded from cache: " + imageUrl);
+                } else {
+                    // Download from Glide
+                    downloadLoadedImage(imageUrl);
+                    Log.d("Download", "Downloaded from URL: " + imageUrl);
+                }
+            }
+        });
     }
 
     @Override
@@ -85,73 +111,100 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
         return imageUrls.size();
     }
 
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imv_listMedia;
-        AppCompatButton btn;
+        ImageView imageView;
+        ProgressBar progressBar;
+        AppCompatButton singleImageDownload;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imv_listMedia = itemView.findViewById(R.id.rv_bg_removed_image);
-            btn = itemView.findViewById(R.id.btn_download);
+            imageView = itemView.findViewById(R.id.rv_bg_removed_image);
+            progressBar = itemView.findViewById(R.id.progressbar_bg_removed_image_bg_remover_layout);
+            singleImageDownload = itemView.findViewById(R.id.btn_single_img_download_layout_bg_remover);
         }
     }
 
-    // Method to download the image
-    public void downloadAllImages() {
-        for (Uri imageUrl : imageUrls) {
-            downloadImage(imageUrl, null); // Pass null if no UI updates required
-        }
-    }
-
-    public void downloadImage(Uri imageUrl, ViewHolder holder) {
+    /**
+     * Cache a loaded image as a File
+     *
+     * @param imageUrl The URL of the loaded image
+     */
+    private void cacheLoadedImage(Uri imageUrl) {
         Glide.with(context)
-                .asBitmap()
+                .asFile()
                 .load(imageUrl)
-                .into(new CustomTarget<Bitmap>() {
+                .into(new CustomTarget<File>() {
                     @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        try {
-                            String fileName = "Image_Rainbow_Tools" + System.currentTimeMillis() + ".png";
-                            OutputStream outputStream;
-
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                                ContentValues contentValues = new ContentValues();
-                                contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
-                                contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
-                                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/MyAppImages");
-
-                                Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                                if (uri != null) {
-                                    outputStream = context.getContentResolver().openOutputStream(uri);
-                                } else {
-                                    Toast.makeText(context, "Failed to create file", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                            } else {
-                                File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyAppImages");
-                                if (!dir.exists()) dir.mkdirs();
-                                File file = new File(dir, fileName);
-                                outputStream = new FileOutputStream(file);
-                            }
-
-                            resource.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                            outputStream.flush();
-                            outputStream.close();
-
-                            Toast.makeText(context, "Image downloaded to Pictures/MyAppImages", Toast.LENGTH_SHORT).show();
-                        } catch (Exception e) {
-                            Toast.makeText(context, "Failed to save image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                        loadedImagesCache.put(imageUrl, resource);
+                        Log.d("Cache", "Image cached: " + imageUrl.toString());
                     }
 
                     @Override
                     public void onLoadCleared(@Nullable Drawable placeholder) {
-                        if (holder != null) {
-                        }
+                        Log.d("Cache", "Cache cleared for: " + imageUrl.toString());
                     }
                 });
+    }
+
+    /**
+     * Download a loaded image directly
+     *
+     * @param imageUrl The URL of the image to download
+     */
+    private void downloadLoadedImage(Uri imageUrl) {
+        Glide.with(context)
+                .asFile()
+                .load(imageUrl)
+                .into(new CustomTarget<File>() {
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                        saveFileToDownloads(resource);
+                        Log.d("Download", "File downloaded successfully from URL: " + imageUrl.toString());
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        Log.d("Download", "Download target cleared.");
+                    }
+                });
+    }
+
+    /**
+     * Save a cached file to the Downloads directory
+     *
+     * @param sourceFile The file retrieved from Glide's cache
+     */
+    private void saveFileToDownloads(File sourceFile) {
+        try {
+            // Get the Downloads directory
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            // Create a destination file with a unique name
+            File destFile = new File(downloadsDir, "Rainbow_image_" + System.currentTimeMillis() + ".png");
+
+            // Copy the file from the cache to the Downloads directory
+            try (InputStream inputStream = new FileInputStream(sourceFile);
+                 OutputStream outputStream = new FileOutputStream(destFile)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+            }
+
+            // Notify the media scanner to index the new file
+            scanFileForGallery(destFile);
+
+            // Log the file's location for debugging
+            Log.d("Download", "File saved to " + destFile.getAbsolutePath());
+        } catch (IOException e) {
+            // Handle any errors during the file save process
+            Log.e("Download", "Failed to save file", e);
+        }
+    }
+    private void scanFileForGallery(File file) {
+        MediaScannerConnection.scanFile(context, new String[]{file.getAbsolutePath()}, null,
+                (path, uri) -> Log.d("MediaScanner", "Scanned " + path + " -> URI: " + uri));
     }
 
 }

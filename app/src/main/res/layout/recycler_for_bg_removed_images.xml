@@ -2,47 +2,61 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="170dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardCornerRadius="6dp"
     app:cardElevation="6dp">
 
-
+    <!-- LinearLayout to stack ImageView and Button vertically -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:orientation="vertical">
+
+        <!-- ImageView to display the image -->
+
         <FrameLayout
-
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-
+            android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/rv_bg_removed_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:background="@drawable/bg_template" />
+            <ProgressBar
+                android:id="@+id/progressbar_bg_removed_image_bg_remover_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:src="@drawable/emtyimgbgrmv"
-                android:background="@drawable/bg_template"/>
+                android:visibility="visible" />
         </FrameLayout>
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_download"
+
+        <!-- Button placed below the ImageView -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/shimmer_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="#D5CBCB"
-            android:paddingVertical="12dp"
-            android:paddingHorizontal="20dp"
-            android:text="Download"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:drawableStart="@drawable/baseline_cloud_download_24"
-            android:drawablePadding="8dp"
-            android:elevation="4dp" />
+            android:layout_gravity="center_horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_single_img_download_layout_bg_remover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#D5CBCB"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="20dp"
+                android:text="Download"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:drawableStart="@drawable/baseline_cloud_download_24"
+                android:drawablePadding="8dp"
+                android:elevation="4dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_5sdp"/>
+        </com.facebook.shimmer.ShimmerFrameLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

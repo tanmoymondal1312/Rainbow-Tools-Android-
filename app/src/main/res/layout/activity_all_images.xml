@@ -1,39 +1,51 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:background="@color/white">
 
     <!-- Main vertical RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_weight="1"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/_110sdp"
         android:padding="@dimen/_2sdp" />
-
-    <!-- Horizontal RecyclerView positioned above the button -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_2"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
-        android:padding="@dimen/_2sdp"
-        android:orientation="horizontal"
-        android:layout_marginBottom="@dimen/_45sdp"
-        android:layout_gravity="bottom|center" />
+        android:layout_height="@dimen/_110sdp"
+        android:layout_gravity="bottom|center"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_marginBottom="@dimen/_1sdp">
 
-    <!-- Button at the bottom -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnAdd"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
-        android:text="Add"
-        android:gravity="center"
-        android:background="@drawable/btn_shape_4"
-        android:textColor="@color/white"
-        android:padding="@dimen/_5sdp"
-        android:layout_marginLeft="@dimen/_12sdp"
-        android:layout_marginRight="@dimen/_12sdp"
-        android:layout_marginTop="@dimen/_3sdp"
-        android:layout_marginBottom="@dimen/_3sdp"
-        android:elevation="4dp"
-        android:layout_gravity="bottom|center" />
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_65sdp"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="bottom|center"
+            android:layout_marginTop="@dimen/_4sdp">
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnAdd"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp"
+                android:text="Add"
+                android:gravity="center"
+                android:background="@drawable/btn_shape_4"
+                android:textColor="@color/white"
+                android:layout_marginLeft="@dimen/_12sdp"
+                android:layout_marginRight="@dimen/_12sdp"
+                android:elevation="4dp"
+                android:layout_gravity="bottom|center" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

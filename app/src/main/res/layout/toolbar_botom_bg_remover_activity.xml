@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_80sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/_2sdp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/generating_animation_id_bg_remover_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                app:lottie_fileName="genereting_green.json"/>
+            <ImageView
+                android:id="@+id/generate_disable_image_id_bg_remover_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/animation_disable_transparent_bg"/>
+        </FrameLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_select_image_id_abgr"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_fileName="select_image.json"
+            android:clickable="true"/>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

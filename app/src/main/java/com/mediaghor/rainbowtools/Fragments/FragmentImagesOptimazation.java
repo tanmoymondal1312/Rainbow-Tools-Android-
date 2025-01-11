@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,14 +49,16 @@ public class FragmentImagesOptimazation extends Fragment {
                 "Image Resizer",
                 "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.bg_remover
         ));
+        cardItemsList.add(new CardItemsModel(
+                "Background Remover",
+                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.bg_remover
+        ));
 
         // Setting adapter
         CardItemAdapter adapter = new CardItemAdapter(requireContext(), cardItemsList);
         recyclerView.setAdapter(adapter);
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 2);
-        recyclerView.setLayoutManager(gridLayoutManager);
-
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
         return rootView;
     }
 }
