@@ -23,11 +23,13 @@ import java.util.List;
 public class ImageUploadHelper {
 
     private Context context;
+    private Call<ImageUploadResponse> currentUploadCall; // Track the current upload call
 
     public ImageUploadHelper(Context context) {
         this.context = context;
     }
 
+    // Method to upload images
     public void uploadImages(List<Uri> uris, final ImageUploadCallback callback) {
         // Prepare the list of MultipartBody.Part for each image
         ArrayList<MultipartBody.Part> parts = new ArrayList<>();
@@ -40,10 +42,10 @@ public class ImageUploadHelper {
 
         // Create the Retrofit API service
         Api service = RetrofitClient.getRetrofitInstance().create(Api.class);
-        Call<ImageUploadResponse> call = service.uploadImages(parts);
+        currentUploadCall = service.uploadImages(parts); // Store the call reference
 
         // Make the network call
-        call.enqueue(new Callback<ImageUploadResponse>() {
+        currentUploadCall.enqueue(new Callback<ImageUploadResponse>() {
             @Override
             public void onResponse(Call<ImageUploadResponse> call, Response<ImageUploadResponse> response) {
                 if (response.isSuccessful()) {
@@ -66,6 +68,14 @@ public class ImageUploadHelper {
                 callback.onImageUploadFailure("Network error: " + t.getMessage());
             }
         });
+    }
+
+    // Method to cancel the ongoing upload
+    public void cancelUpload() {
+        if (currentUploadCall != null && !currentUploadCall.isCanceled()) {
+            currentUploadCall.cancel(); // Cancel the ongoing call
+        } else {
+        }
     }
 
     // Helper function to get file path from URI

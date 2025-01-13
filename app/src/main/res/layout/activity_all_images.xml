@@ -40,7 +40,7 @@
                 android:layout_height="@dimen/_35sdp"
                 android:text="Add"
                 android:gravity="center"
-                android:background="@drawable/btn_shape_4"
+                android:background="@drawable/btn_shape_cancel"
                 android:textColor="@color/white"
                 android:layout_marginLeft="@dimen/_12sdp"
                 android:layout_marginRight="@dimen/_12sdp"

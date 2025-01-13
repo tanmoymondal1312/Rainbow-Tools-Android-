@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -84,7 +83,7 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
                             Log.e("GlideError", "Image load failed", e);
                         }
                         holder.progressBar.setVisibility(View.GONE);
-                        holder.imageView.setImageResource(R.drawable.server_error);
+                        holder.imageView.setImageResource(R.drawable.server_error_2);
                         holder.singleImageDownload.setVisibility(View.GONE);
                         return true;
                     }

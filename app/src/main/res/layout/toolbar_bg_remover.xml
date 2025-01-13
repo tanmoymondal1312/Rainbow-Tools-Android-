@@ -48,6 +48,7 @@
                     android:layout_height="@dimen/_25sdp"
                     android:layout_gravity="start|center_vertical"
                     android:src="@drawable/rainbowtoolicon" />
+
             </LinearLayout>
     </RelativeLayout>
     <RelativeLayout
