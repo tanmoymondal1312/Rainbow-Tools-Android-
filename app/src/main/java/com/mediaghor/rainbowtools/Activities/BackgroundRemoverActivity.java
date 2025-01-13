@@ -58,7 +58,10 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     private ImageButton toolbarBackBtn;
     AppCompatButton cancel_processing;
     private RecyclerView RV_SelectedImages,RV_ProcessedImages;
-    LottieAnimationView lottieAnimationSelectImages,lottieAnimationGenerateImages,download,downloading;
+    LottieAnimationView lottieAnimationSelectImages,lottieAnimationGenerateImages,download,downloading,lottieGeneratingProgressBar;
+    View ProgressingIncluded;
+
+
 
 
     //Data
@@ -71,7 +74,6 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     BackgroundRemovedImageAdapter adapter2;
     private ActivityResultLauncher<Intent> selectImagesLauncher;
     ButtonAnimationManager buttonAnimationManager;
-    ProcessingDialog processingDialog;
     CustomToastManager customToastManager;
     private CheckConnection checkConnection;
     ImageUploadHelper imageUploadHelper = new ImageUploadHelper(this);
@@ -80,78 +82,16 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
 
 
-//    // Global HashMap to store button IDs
-//
-//    // Function to add a dynamic button
-//    private void addDynamicButtonToLayout(String buttonText, int layoutId, String uniqueKey) {
-//        LinearLayout parentLayout = findViewById(layoutId);
-//
-//        if (parentLayout == null) {
-//            Log.e("DynamicButton", "Parent layout not found with ID: " + layoutId);
-//            return;
-//        }
-//
-//        // Create a new Button
-//        Button dynamicButton = new Button(this);
-//        dynamicButton.setText(buttonText);
-//        dynamicButton.setBackground(ContextCompat.getDrawable(this, R.drawable.btn_shape_cancel));
-//
-//
-//        // Generate a unique ID for the button
-//        int buttonId = View.generateViewId();
-//        dynamicButton.setId(buttonId);
-//
-//        // Save the ID in the HashMap
-//        buttonIdMap.put(uniqueKey, buttonId);
-//
-//        // Set other properties and listeners
-//        dynamicButton.setOnClickListener(v -> {
-//            imageUploadHelper.cancelUpload();
-//            buttonAnimationManager.GeneratingButtonAnimation("enable");
-//            removeButtonByKey(R.id.cancel_btn_parent_layout_rbg_l, "cancelButton");
-//        });
-//
-//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.WRAP_CONTENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT
-//        );
-//        layoutParams.setMargins(16, 16, 16, 150);
-//        dynamicButton.setLayoutParams(layoutParams);
-//
-//        // Add the button to the parent layout
-//        parentLayout.addView(dynamicButton);
-//    }
-//
-//    // Function to remove the button by key
-//    private void removeButtonByKey(int layoutId, String uniqueKey) {
-//        LinearLayout parentLayout = findViewById(layoutId);
-//
-//        if (parentLayout == null) {
-//            Log.e("RemoveButton", "Parent layout not found with ID: " + layoutId);
-//            return;
-//        }
-//
-//        // Retrieve the button ID using the unique key
-//        Integer buttonId = buttonIdMap.get(uniqueKey);
-//        if (buttonId != null) {
-//            Button buttonToRemove = parentLayout.findViewById(buttonId);
-//            if (buttonToRemove != null) {
-//                parentLayout.removeView(buttonToRemove);
-//                buttonIdMap.remove(uniqueKey); // Remove from the HashMap
-//                Toast.makeText(this, "Button Removed!", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Log.e("RemoveButton", "Button not found with ID: " + buttonId);
-//            }
-//        } else {
-//            Log.e("RemoveButton", "No button ID found for key: " + uniqueKey);
-//        }
-//    }
 
 
 
+    private void showLoading() {
+        ProgressingIncluded.setVisibility(View.VISIBLE);
+    }
 
-
-
+    private void hideLoading() {
+        ProgressingIncluded.setVisibility(View.GONE);
+    }
 
 
     private void uploadImagesToBackend(ArrayList<Uri> uris) {
@@ -192,8 +132,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
 
     private void WorkWithFinalImages() {
-        //processingDialog.show();
-        //addDynamicButtonToLayout("Cancel", R.id.cancel_btn_parent_layout_rbg_l, "cancelButton");
+        showLoading();
         cancel_processing.setVisibility(View.VISIBLE);
         adapter.setUploadingStates(true);
         buttonAnimationManager.GeneratingButtonAnimation("animated");
@@ -203,13 +142,10 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
     // Optional method to signal external components
     private void notifyImageUploadSuccess() {
-        //processingDialog.dismiss();
+        hideLoading();
         cancel_processing.setVisibility(View.GONE);
         SetProcessImagesInRecycler();
         buttonAnimationManager.GeneratingButtonAnimation("enable");
-
-        // Implement your signaling mechanism here, e.g., a callback, event bus, or a LiveData observer
-        // Example: EventBus.getDefault().post(new ImageUploadSuccessEvent(imageUrls));
     }
 
 
@@ -228,7 +164,6 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         RV_SelectedImages.setLayoutManager(layoutManager);
         RV_SelectedImages.setAdapter(adapter);
-        //Data Loaded In Ui And pause the loop
     }
 
     private void GetImagesFromDevices(){
@@ -287,8 +222,9 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         RV_SelectedImages = findViewById(R.id.rv_right_for_selected_image_bg_remover_activity);
         RV_ProcessedImages = findViewById(R.id.rv_left_for_bg_removed_images_bg_remover_activity);
         cancel_processing = findViewById(R.id.btn_cancel_processing_rbg_l);
+        ProgressingIncluded = findViewById(R.id.lottie_generating_in_bgr_l);
+        lottieGeneratingProgressBar = findViewById(R.id.lottieAnimation_generating);
         //Implementation Everything
-        processingDialog = new ProcessingDialog(this);
         buttonAnimationManager = new ButtonAnimationManager(this);
         customToastManager = new CustomToastManager(this);
         checkConnection = new CheckConnection(this);
@@ -296,17 +232,10 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         buttonAnimationManager.SelectImageAnimation("loop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("disable");
         buttonAnimationManager.DownloadAllImagesAnimation("disable");
-        //Processing Button Unvisitable
         cancel_processing.setVisibility(View.GONE);
+        hideLoading();
 
-        cancel_processing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imageUploadHelper.cancelUpload();
-                buttonAnimationManager.GeneratingButtonAnimation("enable");
-                cancel_processing.setVisibility(View.GONE);
-            }
-        });
+
 
         //Toolbar Back Button
         toolbarBackBtn.setOnClickListener(new View.OnClickListener() {
@@ -329,10 +258,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkConnection.isInternetConnected()) {
                     // If the device is connected to the internet, check server connection
-
                     WorkWithFinalImages();
-
-
                     checkConnection.checkServerConnection(new CheckConnection.ServerConnectionListener() {
                         @Override
                         public void onConnectionChecked(boolean isConnected) {
@@ -352,6 +278,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        hideLoading();
                                         cancel_processing.setVisibility(View.GONE);
                                         buttonAnimationManager.GeneratingButtonAnimation("enable");
 
@@ -389,6 +316,17 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 adapter2.DownloadAllImages();
+            }
+        });
+
+        cancel_processing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                hideLoading();
+                imageUploadHelper.cancelUpload();
+                buttonAnimationManager.GeneratingButtonAnimation("enable");
+                cancel_processing.setVisibility(View.GONE);
             }
         });
 
