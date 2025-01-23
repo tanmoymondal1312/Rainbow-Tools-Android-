@@ -79,6 +79,7 @@ public class ButtonAnimationManager {
             LottieAnimationView download,downloading;
             download = activity.findViewById(R.id.lottie_anim_download_in_bottom_toolbar_bgrl);
             downloading = activity.findViewById(R.id.lottie_anim_downloading_in_bottom_toolbar_bgrl);
+
             switch (state){
                 case "download":
                     downloading.setVisibility(View.GONE);
@@ -121,4 +122,38 @@ public class ButtonAnimationManager {
             Log.e("GeneratingButtonAnimation", "Context is not an instance of Activity!");
         }
     }
+    public void DownloadDeleteAnimationInItem(String state, View itemView) {
+        LottieAnimationView Remove, Download;
+        Remove = itemView.findViewById(R.id.remove_item_from_recy_enhance_img_itm);
+        Download = itemView.findViewById(R.id.download_item_from_recy_enhance_img_itm);
+
+        if (Remove == null || Download == null) {
+            Log.e("DownloadDeleteAnimation", "Views not found in itemView");
+            return; // Prevent null pointer exceptions
+        }
+
+        switch (state) {
+            case "remove":
+                Download.setVisibility(View.GONE);
+                Remove.setVisibility(View.VISIBLE);
+                Remove.setEnabled(true);
+                Remove.setClickable(true);
+                Remove.loop(true);
+                Remove.playAnimation();
+                break;
+            case "download":
+                Remove.setVisibility(View.GONE);
+                Download.setVisibility(View.VISIBLE);
+                Download.setEnabled(true);
+                Download.setClickable(true);
+                Download.loop(true);
+                Download.playAnimation();
+                break;
+            default:
+                Log.e("DownloadDeleteAnimation", "Invalid state: " + state);
+                break;
+        }
+    }
+
+
 }

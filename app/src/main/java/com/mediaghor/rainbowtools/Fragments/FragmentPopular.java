@@ -1,103 +1,95 @@
 package com.mediaghor.rainbowtools.Fragments;
 
 import android.annotation.SuppressLint;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
+import android.widget.SeekBar;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.mediaghor.rainbowtools.Activities.BackgroundRemoverActivity;
-import com.mediaghor.rainbowtools.OthersClasses.CustomNetworkDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.fragment.app.Fragment;
+
 import com.mediaghor.rainbowtools.R;
-import android.graphics.drawable.Drawable;
-
-import android.util.Log;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import android.graphics.drawable.Drawable;
-
-
-//import javax.sql.DataSource;
-
 
 public class FragmentPopular extends Fragment {
-    ImageView imageView;
-    TextView UrlText;
-    AppCompatButton btn;
-    AppCompatButton cancel_processing;
 
-
-
+    private ImageView ImageAfterEnhance, ImageBeforeEnhance; // Foreground and background images
+    private SeekBar slider;       // Slider to control clipping
+    private View sliderLine;      // Line to represent the slider's position
+    private FrameLayout frameLayout;
 
     public FragmentPopular() {
         // Required empty public constructor
     }
 
-
     @SuppressLint("MissingInflatedId")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_popular, container, false);
-        btn = view.findViewById(R.id.click_in_popular);
-        //cancel_processing = view.findViewById(R.id.id_btn_cancel_processing_bg_removed_layout);
 
-        //cancel_processing.setVisibility(View.GONE);
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CustomNetworkDialog dialog = new CustomNetworkDialog(
-                        getContext(), // Context (e.g., Activity)
-                        R.drawable.no_internet, // Image resource
-                        "Please Connect Your Internet !" // Dynamic message
-                );
-                dialog.show();
-
-//                cancel_processing.setVisibility(View.VISIBLE);
+        // Initialize views
+//        ImageBeforeEnhance = view.findViewById(R.id.img_id_recycler_before_enhance);
+//        ImageAfterEnhance = view.findViewById(R.id.img_id_recycler_after_enhance);
+        //slider = view.findViewById(R.id.slider);
+//        sliderLine = view.findViewById(R.id.slider_line);
 
 
-            }
-
-        });
-
-        //processingMode("disable");
-
-//        cancel_processing.setOnClickListener(new View.OnClickListener() {
+        // Wait for layout setup
+//        ImageAfterEnhance.post(() -> {
+//            slider.setProgress(50);
+//            updateClipping(slider.getProgress());
+//            updateLinePosition(slider.getProgress());
+//        });
+//
+//        slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 //            @Override
-//            public void onClick(View v) {
-//                cancel_processing.setVisibility(View.GONE);
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                updateClipping(progress);
+//                updateLinePosition(progress);
+//            }
 //
-//                Toast.makeText(getContext(), "Just Wait A Little Longer", Toast.LENGTH_SHORT).show();
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//            }
 //
-////                Log.d("Cancel","Clicked");
-////                processingMode("disable");
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
 //            }
 //        });
-
-
-
-
+//
         return view;
+    }
+
+    // Method to update clipping using Canvas (custom draw)
+    private void updateClipping(int progress) {
+        if (ImageAfterEnhance == null) return;
+
+        // Calculate clipping width based on progress
+        int width = ImageAfterEnhance.getWidth();
+        int clipWidth = (width * progress) / 100;
+
+        // Apply clipping
+        ImageAfterEnhance.setClipBounds(new android.graphics.Rect(0, 0, clipWidth, ImageAfterEnhance.getHeight()));
+        ImageAfterEnhance.invalidate(); // Redraw the view
+    }
+
+    // Update the position of the slider line
+    private void updateLinePosition(int progress) {
+        if (sliderLine == null || ImageAfterEnhance == null) return;
+
+        // Calculate line position based on ImageAfterEnhance width
+        float width = ImageAfterEnhance.getWidth();
+        float linePosition = (width * progress) / 100;
+
+        // Set the X position of the line
+        sliderLine.setX(linePosition - (sliderLine.getWidth() / 2));
     }
 }

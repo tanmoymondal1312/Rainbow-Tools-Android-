@@ -1,0 +1,27 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Before Image -->
+    <ImageView
+        android:id="@+id/beforeImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <!-- After Image -->
+    <ImageView
+        android:id="@+id/afterImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <!-- Slider Line -->
+    <View
+        android:id="@+id/sliderLine"
+        android:layout_width="5dp"
+        android:layout_height="match_parent"
+        android:background="#FF0000"
+        android:layout_marginStart="50dp" />
+</RelativeLayout>

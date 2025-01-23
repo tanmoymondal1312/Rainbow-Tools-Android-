@@ -78,7 +78,6 @@ public class SelectedImageAdapter extends RecyclerView.Adapter<SelectedImageAdap
             try {
                 imageView = itemView.findViewById(R.id.imageView_2);
             } catch (Exception e) {
-                Log.e("selected_img_tag", "Error in ViewHolder constructor: " + e.getMessage(), e);
             }
         }
     }

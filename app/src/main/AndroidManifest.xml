@@ -21,13 +21,18 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activities.EnhanceImagesActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RainbowTools"/>
+
+        <activity
             android:name=".Activities.AllimagesActivity"
-            android:theme="@style/Theme.RainbowTools"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.RainbowTools" />
         <activity
             android:name=".Activities.BackgroundRemoverActivity"
             android:exported="false"
-            android:theme="@style/Theme.RainbowTools"></activity>
+            android:theme="@style/Theme.RainbowTools" />
         <activity
             android:name=".Activities.MainActivity"
             android:exported="true"

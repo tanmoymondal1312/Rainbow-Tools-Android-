@@ -10,15 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mediaghor.rainbowtools.Activities.BackgroundRemoverActivity;
+import com.mediaghor.rainbowtools.Activities.EnhanceImagesActivity;
 import com.mediaghor.rainbowtools.Models.CardItemsModel;
 import com.mediaghor.rainbowtools.R;
 
@@ -59,9 +58,17 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
         Log.d("VideoPlayback", "Received URI for video at position " + position + ": " + imageUri);
 
 
+
         holder.cardView.setOnClickListener(v -> {
+            Intent intent = null;
             if (currentItem.getText().equals("Background Remover")) {
-                Intent intent = new Intent(context, BackgroundRemoverActivity.class);
+                intent = new Intent(context, BackgroundRemoverActivity.class);
+            }else if(currentItem.getText().equals("Photo Optimizer")){
+                intent = new Intent(context, EnhanceImagesActivity.class);
+            }
+
+            // Start the activity if an intent is created
+            if (intent != null) {
                 context.startActivity(intent);
             }
         });

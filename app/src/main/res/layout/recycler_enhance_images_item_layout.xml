@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="6dp"
+    android:layout_margin="@dimen/_10sdp"
+    tools:context=".Fragments.FragmentPopular"
+    android:background="@color/white">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:paddingTop="@dimen/_5sdp"
+        android:paddingBottom="@dimen/_6sdp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white">
+            <ImageView
+                android:id="@+id/img_id_recycler_before_enhance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/anuradha_mitro"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:layout_gravity="center"/>
+            <ImageView
+                android:id="@+id/img_id_recycler_after_enhance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:layout_gravity="center"/>
+
+            <View
+                android:id="@+id/slider_line_view"
+                android:layout_width="4dp"
+                android:layout_height="match_parent"
+                android:background="@color/transparent_gray"
+                android:layout_gravity="center"/>
+
+            <SeekBar
+                android:id="@+id/slider"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:progress="50"
+                android:thumb="@drawable/slider_thumb"
+                android:progressDrawable="@android:color/transparent" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/remove_item_from_recy_enhance_img_itm"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                app:lottie_fileName="red_delete.json"
+                android:layout_gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/download_item_from_recy_enhance_img_itm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:lottie_fileName="download_violet_text.json"
+                android:layout_gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
+
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
