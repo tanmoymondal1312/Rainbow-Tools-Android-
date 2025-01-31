@@ -5,6 +5,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,15 +28,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.mediaghor.rainbowtools.Adapter.EnhanceImagesAdapter;
 import com.mediaghor.rainbowtools.Helpers.ImagePermissionHandler;
+import com.mediaghor.rainbowtools.Helpers.ImageUploadHelper;
 import com.mediaghor.rainbowtools.OthersClasses.ButtonAnimationManager;
+import com.mediaghor.rainbowtools.OthersClasses.CustomNetworkDialog;
 import com.mediaghor.rainbowtools.R;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class EnhanceImagesActivity extends AppCompatActivity {
 
     private ImageButton toolbarBackBtn,settingToolbarImgBtn;
-    LottieAnimationView lottieAnimationSelectImages,downloadAllImagesLottie;
+    LottieAnimationView lottieAnimationSelectImages,generateButton,downloadAllImagesLottie;
     TextView toolbarTitle;
 
     //ArrayList<Integer> beforeEnhanceImages = new ArrayList<>();
@@ -47,19 +53,72 @@ public class EnhanceImagesActivity extends AppCompatActivity {
     EnhanceImagesAdapter adapter;
     ButtonAnimationManager buttonAnimationManager;
     private ActivityResultLauncher<Intent> selectImagesLauncher;
+    ImageUploadHelper imageUploadHelper;
 
 
 
+    private void uploadImagesToBackend(ArrayList<Uri> uris) {
+        ExecutorService executor = Executors.newSingleThreadExecutor(); // Use a single background thread for processing
+        Handler mainThreadHandler = new Handler(Looper.getMainLooper()); // Handler for communicating with the UI thread
+
+        executor.execute(() -> {
+            try {
+                imageUploadHelper = new ImageUploadHelper(this,2);
+                imageUploadHelper.uploadImages(uris, new ImageUploadHelper.ImageUploadCallback() {
+                    @Override
+                    public void onImageUploadSuccess(ArrayList<Uri> imageUrls) {
+                        // Switch back to the UI thread for UI updates
+                        mainThreadHandler.post(() -> {
+                            EnhanceImagesActivity.this.afterEnhanceImages = imageUrls;
+                            EnhanceImagesAccepted();
+                            Toast.makeText(EnhanceImagesActivity.this, "Success", Toast.LENGTH_SHORT).show();
+
+                        });
+                    }
+
+                    @Override
+                    public void onImageUploadFailure(String errorMessage) {
+                        // Switch back to the UI thread for UI updates
+                        mainThreadHandler.post(() -> {
+                            //Hande If cancel or connection failed
+                        });
+                    }
+                });
+            } catch (Exception e) {
+                // Handle unexpected exceptions
+                mainThreadHandler.post(() ->
+                        Toast.makeText(EnhanceImagesActivity.this, "Unexpected error occurred: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
+            } finally {
+                executor.shutdown(); // Release resources
+            }
+        });
+    }
 
 
 
 
 
     private void SetSelectedImagesInRecycler(){
+        buttonAnimationManager.SelectImageAnimation("unloop_animation");
+        buttonAnimationManager.GeneratingButtonAnimation("enable");
         recyclerViewImageEnhance.setLayoutManager(new LinearLayoutManager(this));
         adapter = new EnhanceImagesAdapter(EnhanceImagesActivity.this,beforeEnhanceImages);
         recyclerViewImageEnhance.setAdapter(adapter);
     }
+    private void WorkWithFinalImages() {
+        // These lines will execute immediately
+        buttonAnimationManager.GeneratingButtonAnimation("animated");
+        adapter.setUploadingState(true);
+        uploadImagesToBackend(adapter.GetFinalSelectedImages());
+
+        // Wait 5 seconds before showing the custom dialog
+    }
+    private void EnhanceImagesAccepted(){
+        buttonAnimationManager.GeneratingButtonAnimation("enable");
+        adapter.AddAfterEnhanceImagesToArray(afterEnhanceImages);
+    }
+
 
 
 
@@ -109,6 +168,7 @@ public class EnhanceImagesActivity extends AppCompatActivity {
         toolbarTitle = findViewById(R.id.toolbar_in_tools_title_id);
 
         lottieAnimationSelectImages = findViewById(R.id.animation_select_image_id_abgr);
+        generateButton = findViewById(R.id.generating_animation_id_bg_remover_layout);
         downloadAllImagesLottie = findViewById(R.id.lottie_anim_download_in_bottom_toolbar_bgrl);
         recyclerViewImageEnhance = findViewById(R.id.recycler_id_enhance_images);
 
@@ -125,9 +185,9 @@ public class EnhanceImagesActivity extends AppCompatActivity {
         buttonAnimationManager.DownloadAllImagesAnimation("disable");
 
 
-        afterEnhanceImages.add(Uri.parse("https://picsum.photos/id/237/200/300"));
-        afterEnhanceImages.add(Uri.parse("https://picsum.photos/seed/picsum/200/300"));
-        afterEnhanceImages.add(Uri.parse("https://picsum.photos/200/300?grayscale"));
+//        afterEnhanceImages.add(Uri.parse("https://picsum.photos/id/237/200/300"));
+//        afterEnhanceImages.add(Uri.parse("https://picsum.photos/seed/picsum/200/300"));
+//        afterEnhanceImages.add(Uri.parse("https://picsum.photos/200/300?grayscale"));
 
 
         //Set Listener
@@ -145,10 +205,17 @@ public class EnhanceImagesActivity extends AppCompatActivity {
                 GetImagesFromDevices();
             }
         });
+        generateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WorkWithFinalImages();
+            }
+        });
+
         settingToolbarImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapter.AddAfterEnhanceImagesToArray(afterEnhanceImages);
+//                adapter.AddAfterEnhanceImagesToArray(afterEnhanceImages);
             }
         });
 

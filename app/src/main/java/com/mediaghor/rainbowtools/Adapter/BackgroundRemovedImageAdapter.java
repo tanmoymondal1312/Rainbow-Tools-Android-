@@ -105,11 +105,9 @@ public class BackgroundRemovedImageAdapter extends RecyclerView.Adapter<Backgrou
                 if (loadedImagesCache.containsKey(imageUrl)) {
                     // Download from the cached file
                     saveFileToDownloads(loadedImagesCache.get(imageUrl));
-                    Log.d("Download", "Downloaded from cache: " + imageUrl);
                 } else {
                     // Download from Glide
                     downloadLoadedImage(imageUrl);
-                    Log.d("Download", "Downloaded from URL: " + imageUrl);
                 }
                 customToastManager.showDownloadSuccessToast(R.drawable.download_success,"Successfully Downloaded The Image",2);
 

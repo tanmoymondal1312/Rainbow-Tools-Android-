@@ -76,7 +76,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     ButtonAnimationManager buttonAnimationManager;
     CustomToastManager customToastManager;
     private CheckConnection checkConnection;
-    ImageUploadHelper imageUploadHelper = new ImageUploadHelper(this);
+    ImageUploadHelper imageUploadHelper;
 
 
 
@@ -100,7 +100,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
         executor.execute(() -> {
             try {
-                imageUploadHelper = new ImageUploadHelper(this);
+                imageUploadHelper = new ImageUploadHelper(this,1);
                 imageUploadHelper.uploadImages(uris, new ImageUploadHelper.ImageUploadCallback() {
                     @Override
                     public void onImageUploadSuccess(ArrayList<Uri> imageUrls) {

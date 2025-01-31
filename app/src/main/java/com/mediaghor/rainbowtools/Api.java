@@ -18,4 +18,9 @@ public interface Api{
     Call<ImageUploadResponse> uploadImages(
             @Part List<MultipartBody.Part> images
     );
+    @Multipart
+    @POST("image-optimization/enhance-images/")
+    Call<ImageUploadResponse> uploadImagesForEnhanceImages(
+            @Part List<MultipartBody.Part> images
+    );
 }

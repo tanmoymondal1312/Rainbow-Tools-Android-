@@ -16,15 +16,21 @@ import android.widget.SeekBar;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.mediaghor.rainbowtools.OthersClasses.ButtonAnimationManager;
 import com.mediaghor.rainbowtools.R;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdapter.ImageViewHolder> {
 
@@ -32,6 +38,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
     private ArrayList<Uri> afterEnhanceImages;
     private final Context context;
     private boolean iSEnhanceImagesGet = false;
+    private boolean isUploading;
     ButtonAnimationManager buttonAnimationManager;
 
     // Constructor
@@ -54,22 +61,42 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         Uri uriBeforeEnhance = beforeEnhanceImages.get(position);
 
         loadBeforeEnhanceImage(holder,uriBeforeEnhance);
+        //Hide Slider Line In Initial Sate
         sliderLineSliderHide(holder);
 
+        //Enable The Remove Button In Initial Sate
         buttonAnimationManager.DownloadDeleteAnimationInItem("remove", holder.itemView);
 
+        //Disable the Remove Button When Uploading In Server
+        if (isUploading) {
+            buttonAnimationManager.DownloadDeleteAnimationInItem("empty", holder.itemView);
+        } else {
+            holder.AnimationRemoveItem.setVisibility(View.VISIBLE);
+        }
 
 
+        //Setting On Remove Item Logic In Remove Button Clicking
+        holder.AnimationRemoveItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int adapterPosition = holder.getAdapterPosition(); // Get updated position
+                if (adapterPosition != RecyclerView.NO_POSITION) { // Ensure it's a valid position
+                    removeItemFromList(adapterPosition);
+                }
+            }
+        });
+
+        // Successfully Get The Process Images , So Lest Work With Those.
         if(afterEnhanceImages != null && iSEnhanceImagesGet && position < afterEnhanceImages.size()){
             Uri uriAfterEnhance = afterEnhanceImages.get(position);
             buttonAnimationManager.DownloadDeleteAnimationInItem("download", holder.itemView);
 
-            sliderLineSliderUnHide(holder);
             resetViewState(holder);
-            loadImage(holder, uriAfterEnhance);
-            setupSeekBar(holder);
+            loadImagesAfterEnhance(holder, uriAfterEnhance,position);
+            //sliderLineSliderUnHide(holder);
 
         }
+
 
 
 
@@ -89,6 +116,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         ImageView ImageViewBeforeEnhance,ImageViewAfterEnhance;
         View sliderLine;
         SeekBar slider;
+        LottieAnimationView AnimationRemoveItem,AnimationDownloadItem;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -96,6 +124,9 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
             ImageViewAfterEnhance = itemView.findViewById(R.id.img_id_recycler_after_enhance);
             sliderLine = itemView.findViewById(R.id.slider_line_view);
             slider = itemView.findViewById(R.id.slider);
+            AnimationRemoveItem = itemView.findViewById(R.id.remove_item_from_recy_enhance_img_itm);
+            AnimationDownloadItem = itemView.findViewById(R.id.download_item_from_recy_enhance_img_itm);
+
         }
     }
 
@@ -103,18 +134,9 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
 
 
 
-    private void sliderLineSliderHide(ImageViewHolder holder){
-        holder.slider.setVisibility(View.GONE);
-        holder.sliderLine.setVisibility(View.GONE);
-    }
-    private void sliderLineSliderUnHide(ImageViewHolder holder){
-        holder.slider.setVisibility(View.VISIBLE);
-        holder.sliderLine.setVisibility(View.VISIBLE);
-    }
 
 
-
-
+    // All Classes To Manage States Of Selected Images ============================================
     /**
      * Loads an image into the ImageView using Glide.
      *
@@ -125,26 +147,56 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         Glide.with(context)
                 .load(uri)
                 .placeholder(R.drawable.placeholder_image)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model,
-                                                Target<Drawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model,
-                                                   Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-                        return false;
-                    }
-                })
+                .dontAnimate() // Optional: Skip animations for faster transitions
                 .into(holder.ImageViewBeforeEnhance);
+
+    }
+    /**
+     * Visible The Slider And The View/Slider Line
+     *
+     * @param holder The ViewHolder containing the ImageView.
+     */
+    private void sliderLineSliderHide(ImageViewHolder holder){
+        holder.slider.setVisibility(View.GONE);
+        holder.sliderLine.setVisibility(View.GONE);
+    }
+    /**
+     * Remove an item from Selected Images List and Adding a Removed Visual Effect
+     *
+     * @param position The ViewHolder containing the ImageView.
+     */
+    private void removeItemFromList(int position) {
+        if (position >= 0 && position < beforeEnhanceImages.size()) { // Check to avoid IndexOutOfBoundsException
+            beforeEnhanceImages.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, beforeEnhanceImages.size()); // Optional but ensures smooth updates
+        }
+        if(beforeEnhanceImages.size() == 0){
+            buttonAnimationManager.SelectImageAnimation("loop_animation");
+            buttonAnimationManager.GeneratingButtonAnimation("disable");
+
+        }
+
+    }
+    /**
+     * Returning The Final Images After Cut Or Add
+     */
+    public ArrayList<Uri> GetFinalSelectedImages(){
+        return beforeEnhanceImages;
+    }
+    /**
+     * Setting Uploading State Eg If Uploading Then Made Remove Animation Button Disable else Enable
+     * @param state Set The state That if uploading or not
+     */
+    public void setUploadingState(boolean state) {
+        isUploading = state;
+        notifyDataSetChanged();
     }
 
 
 
 
+    // All Classes To Manage States Of Processes/Enhance Images ============================================
 
     /**
      * Loads an image into the ImageView using Glide.
@@ -152,10 +204,18 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
      * @param holder The ViewHolder containing the ImageView.
      * @param uri    The URI of the processed image to load.
      */
-    private void loadImage(ImageViewHolder holder, Uri uri) {
+    private void loadImagesAfterEnhance(ImageViewHolder holder, Uri uri, int position) {
+        // Get the corresponding before-enhance image
+        Uri beforeEnhanceUri = beforeEnhanceImages.get(position);
+
+        // Load the before-enhance image with a blur effect
         Glide.with(context)
                 .load(uri)
-                .placeholder(R.drawable.placeholder_image)
+                .thumbnail(Glide.with(context)
+                        .load(beforeEnhanceUri)
+                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3))) // Apply blur effect
+                )
+                .transition(DrawableTransitionOptions.withCrossFade(1000)) // Smooth cross-fade animation
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model,
@@ -167,22 +227,43 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
                     public boolean onResourceReady(Drawable resource, Object model,
                                                    Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         // Apply initial clipping when the image is loaded
-                        // Ensure proper initial clipping after the image is measured
                         holder.ImageViewAfterEnhance.post(() -> {
-                            // Set initial SeekBar progress to 50
                             holder.slider.setProgress(50);
-
-                            // Apply initial clipping
                             int initialProgress = holder.slider.getProgress();
                             handleSeekBarProgress(holder, initialProgress);
                         });
+
+                        sliderLineSliderUnHide(holder);
                         animateSlider(holder);
+                        setupSeekBar(holder);
+
                         return false;
                     }
                 })
                 .into(holder.ImageViewAfterEnhance);
     }
 
+
+    /**
+     * Updates the position of the slider line based on the SeekBar progress.
+     *
+     * @param afterEnhanceImages An array which contain the process iamges
+     */
+    public void  AddAfterEnhanceImagesToArray(ArrayList<Uri> afterEnhanceImages){
+        this.afterEnhanceImages = afterEnhanceImages;
+        this.iSEnhanceImagesGet = true;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Invisible The Slider And The View/Slider Line
+     *
+     * @param holder The ViewHolder containing the ImageView.
+     */
+    private void sliderLineSliderUnHide(ImageViewHolder holder){
+        holder.slider.setVisibility(View.VISIBLE);
+        holder.sliderLine.setVisibility(View.VISIBLE);
+    }
 
 
     /**
@@ -293,16 +374,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
 
         animator.start();
     }
-    /**
-     * Updates the position of the slider line based on the SeekBar progress.
-     *
-     * @param afterEnhanceImages An array which contain the process iamges
-     */
-    public void  AddAfterEnhanceImagesToArray(ArrayList<Uri> afterEnhanceImages){
-        this.afterEnhanceImages = afterEnhanceImages;
-        this.iSEnhanceImagesGet = true;
-        notifyDataSetChanged();
-    }
+
 
 
 

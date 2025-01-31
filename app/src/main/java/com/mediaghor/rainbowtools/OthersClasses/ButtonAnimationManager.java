@@ -149,6 +149,10 @@ public class ButtonAnimationManager {
                 Download.loop(true);
                 Download.playAnimation();
                 break;
+            case "empty":
+                Remove.setVisibility(View.GONE);
+                Download.setVisibility(View.GONE);
+                break;
             default:
                 Log.e("DownloadDeleteAnimation", "Invalid state: " + state);
                 break;
