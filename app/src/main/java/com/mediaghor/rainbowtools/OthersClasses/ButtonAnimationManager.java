@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.mediaghor.rainbowtools.R;
@@ -158,6 +162,47 @@ public class ButtonAnimationManager {
                 break;
         }
     }
+
+    public void ButterflyProgressing(String state) {
+        if (context instanceof Activity) {
+            LottieAnimationView butterFlyLoading = activity.findViewById(R.id.butterfly_progressing_id_img_enhance_laout);
+
+            switch (state) {
+                case "progressing":
+                    butterFlyLoading.setVisibility(View.VISIBLE);
+                    butterFlyLoading.loop(true);
+                    butterFlyLoading.playAnimation();
+                    break;
+                case "disable":
+                    butterFlyLoading.setVisibility(View.GONE);
+                    break;
+            }
+
+
+        }
+    }
+
+    public void CongressCuttingPaperAnimation(String state){
+        if (context instanceof Activity) {
+            LottieAnimationView cuttingPaperAnimation = activity.findViewById(R.id.lottie_cutting_paper_congress_in_img_inhnc_layout);
+
+            switch (state) {
+                case "start":
+                    cuttingPaperAnimation.setVisibility(View.VISIBLE);
+                    cuttingPaperAnimation.loop(true);
+                    cuttingPaperAnimation.playAnimation();
+                    break;
+                case "stop":
+                    cuttingPaperAnimation.setVisibility(View.GONE);
+                    break;
+            }
+
+
+        }
+    }
+
+
+
 
 
 }

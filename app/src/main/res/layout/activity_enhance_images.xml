@@ -22,12 +22,85 @@
         android:layout_weight="1">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+                <TextView
+                    android:id="@+id/notyTextView_in_bdy_inhnce_img_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please Select Your Images And Enhance! \u263A"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/checkbox_checked_color"
+                    android:fontFamily="sans-serif-medium"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:shadowColor="#88000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"
+                    android:background="@drawable/text_bg_1"
+                    android:layout_margin="16dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/select_img_btn_in_bdy_enhance_img_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/select_img_icn"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="0dp"
+                    android:background="@drawable/ripple_effect"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Select Image"
+                    android:foreground="?attr/selectableItemBackground"/>
+            </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_id_enhance_images"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:listitem="@layout/recycler_enhance_images_item_layout"/>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_cutting_paper_congress_in_img_inhnc_layout"
+                android:layout_gravity="center"
+                android:layout_width="1000dp"
+                android:layout_height="match_parent"
+                app:lottie_fileName="congress_cutting_papaer_effects.json"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/butterfly_progressing_id_img_enhance_laout"
+                android:layout_gravity="center|bottom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:lottie_fileName="butterfly_loading.json"
+                android:visibility="gone"/>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_cancel_processing_rbg_l"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="Cancel"
+                android:background="@drawable/btn_shape_cancel"
+                android:layout_gravity="center|bottom"
+                android:layout_marginBottom="@dimen/_40sdp"/>
+
+
         </FrameLayout>
 
     </RelativeLayout>

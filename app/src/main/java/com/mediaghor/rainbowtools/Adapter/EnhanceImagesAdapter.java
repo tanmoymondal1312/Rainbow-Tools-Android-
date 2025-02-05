@@ -39,13 +39,15 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
     private final Context context;
     private boolean iSEnhanceImagesGet = false;
     private boolean isUploading;
+    private OnImageListEmptyListener imageListEmptyListener;
     ButtonAnimationManager buttonAnimationManager;
 
     // Constructor
-    public EnhanceImagesAdapter(Context context, ArrayList<Uri> beforeEnhanceImages) {
+    public EnhanceImagesAdapter(Context context, ArrayList<Uri> beforeEnhanceImages,OnImageListEmptyListener listener) {
         this.context = context;
         this.beforeEnhanceImages = beforeEnhanceImages;
         buttonAnimationManager = new ButtonAnimationManager(context);
+        this.imageListEmptyListener = listener;
     }
 
 
@@ -171,10 +173,9 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, beforeEnhanceImages.size()); // Optional but ensures smooth updates
         }
-        if(beforeEnhanceImages.size() == 0){
-            buttonAnimationManager.SelectImageAnimation("loop_animation");
-            buttonAnimationManager.GeneratingButtonAnimation("disable");
+        if (beforeEnhanceImages.isEmpty() && imageListEmptyListener != null) {
 
+            imageListEmptyListener.onImageListEmpty();
         }
 
     }
@@ -192,6 +193,11 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         isUploading = state;
         notifyDataSetChanged();
     }
+
+    public interface OnImageListEmptyListener {
+        void onImageListEmpty();
+    }
+
 
 
 
@@ -227,6 +233,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
                     public boolean onResourceReady(Drawable resource, Object model,
                                                    Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         // Apply initial clipping when the image is loaded
+                        buttonAnimationManager.CongressCuttingPaperAnimation("stop");
                         holder.ImageViewAfterEnhance.post(() -> {
                             holder.slider.setProgress(50);
                             int initialProgress = holder.slider.getProgress();
