@@ -82,11 +82,10 @@ public class EnhanceImagesActivity extends AppCompatActivity {
                             btnCancelProcessing.setVisibility(View.GONE);
                             EnhanceImagesActivity.this.afterEnhanceImages = imageUrls;
                             EnhanceImagesAccepted();
+                            buttonAnimationManager.DownloadAllImagesAnimation("download");
                             Toast.makeText(EnhanceImagesActivity.this, "Success", Toast.LENGTH_SHORT).show();
-
                         });
                     }
-
                     @Override
                     public void onImageUploadFailure(String errorMessage) {
                         // Switch back to the UI thread for UI updates
@@ -125,6 +124,7 @@ public class EnhanceImagesActivity extends AppCompatActivity {
         InstructionText.setVisibility(View.GONE);
         buttonAnimationManager.SelectImageAnimation("unloop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("enable");
+        buttonAnimationManager.DownloadAllImagesAnimation("disable");
 
         recyclerViewImageEnhance.setLayoutManager(new LinearLayoutManager(this));
 
@@ -319,7 +319,12 @@ public class EnhanceImagesActivity extends AppCompatActivity {
         });
 
 
-
+        downloadAllImagesLottie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.DownloadAllImages();
+            }
+        });
 
 
 

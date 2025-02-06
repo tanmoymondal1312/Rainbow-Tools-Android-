@@ -81,7 +81,8 @@
                 app:lottie_fileName="download_violet_text.json"
                 android:layout_gravity="center"
                 app:lottie_autoPlay="true"
-                app:lottie_loop="true"/>
+                app:lottie_loop="true"
+                android:foreground="?attr/selectableItemBackground"/>
 
 
         </FrameLayout>

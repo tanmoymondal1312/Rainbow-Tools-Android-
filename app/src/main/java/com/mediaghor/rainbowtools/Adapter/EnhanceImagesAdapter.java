@@ -4,7 +4,10 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,11 +28,22 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.mediaghor.rainbowtools.OthersClasses.ButtonAnimationManager;
+import com.mediaghor.rainbowtools.OthersClasses.CustomToastManager;
 import com.mediaghor.rainbowtools.R;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -41,6 +56,9 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
     private boolean isUploading;
     private OnImageListEmptyListener imageListEmptyListener;
     ButtonAnimationManager buttonAnimationManager;
+    private final Map<Uri, File> loadedImagesCache = new HashMap<>();
+    CustomToastManager customToastManager;
+
 
     // Constructor
     public EnhanceImagesAdapter(Context context, ArrayList<Uri> beforeEnhanceImages,OnImageListEmptyListener listener) {
@@ -48,6 +66,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         this.beforeEnhanceImages = beforeEnhanceImages;
         buttonAnimationManager = new ButtonAnimationManager(context);
         this.imageListEmptyListener = listener;
+        this.customToastManager = new CustomToastManager(context);
     }
 
 
@@ -88,6 +107,8 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
             }
         });
 
+
+
         // Successfully Get The Process Images , So Lest Work With Those.
         if(afterEnhanceImages != null && iSEnhanceImagesGet && position < afterEnhanceImages.size()){
             Uri uriAfterEnhance = afterEnhanceImages.get(position);
@@ -97,13 +118,24 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
             loadImagesAfterEnhance(holder, uriAfterEnhance,position);
             //sliderLineSliderUnHide(holder);
 
+
+            //Download Single Images
+            holder.singleImageDownload.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (loadedImagesCache.containsKey(uriAfterEnhance)) {
+                        // Download from the cached file
+                        saveFileToDownloads(loadedImagesCache.get(uriAfterEnhance));
+                    } else {
+                        // Download from Glide
+                        downloadLoadedImage(uriAfterEnhance);
+                    }
+                    customToastManager.showDownloadSuccessToast(R.drawable.download_success,"Successfully Downloaded The Image",2);
+
+                }
+            });
+
         }
-
-
-
-
-
-
 
     }
 
@@ -118,7 +150,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         ImageView ImageViewBeforeEnhance,ImageViewAfterEnhance;
         View sliderLine;
         SeekBar slider;
-        LottieAnimationView AnimationRemoveItem,AnimationDownloadItem;
+        LottieAnimationView AnimationRemoveItem,singleImageDownload;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -127,7 +159,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
             sliderLine = itemView.findViewById(R.id.slider_line_view);
             slider = itemView.findViewById(R.id.slider);
             AnimationRemoveItem = itemView.findViewById(R.id.remove_item_from_recy_enhance_img_itm);
-            AnimationDownloadItem = itemView.findViewById(R.id.download_item_from_recy_enhance_img_itm);
+            singleImageDownload = itemView.findViewById(R.id.download_item_from_recy_enhance_img_itm);
 
         }
     }
@@ -217,6 +249,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         // Load the before-enhance image with a blur effect
         Glide.with(context)
                 .load(uri)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .thumbnail(Glide.with(context)
                         .load(beforeEnhanceUri)
                         .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3))) // Apply blur effect
@@ -232,6 +265,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model,
                                                    Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
                         // Apply initial clipping when the image is loaded
                         buttonAnimationManager.CongressCuttingPaperAnimation("stop");
                         holder.ImageViewAfterEnhance.post(() -> {
@@ -243,6 +277,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
                         sliderLineSliderUnHide(holder);
                         animateSlider(holder);
                         setupSeekBar(holder);
+                        cacheLoadedImage(uri);
 
                         return false;
                     }
@@ -383,6 +418,117 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
     }
 
 
+    /**
+     * Cache a loaded image as a File
+     *
+     * @param imageUrl The URL of the loaded image
+     */
+    private void cacheLoadedImage(Uri imageUrl) {
+        Glide.with(context)
+                .asFile()
+                .load(imageUrl)
+                .into(new CustomTarget<File>() {
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                        loadedImagesCache.put(imageUrl, resource);
+                        Log.d("Cache", "Image cached: " + imageUrl.toString());
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        Log.d("Cache", "Cache cleared for: " + imageUrl.toString());
+                    }
+                });
+    }
+
+    /**
+     * Download a loaded image directly
+     *
+     * @param imageUrl The URL of the image to download
+     */
+    private void downloadLoadedImage(Uri imageUrl) {
+        Glide.with(context)
+                .asFile()
+                .load(imageUrl)
+                .into(new CustomTarget<File>() {
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                        saveFileToDownloads(resource);
+                        Log.d("Download", "File downloaded successfully from URL: " + imageUrl.toString());
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        Log.d("Download", "Download target cleared.");
+                    }
+                });
+    }
+
+    /**
+     * Save a cached file to the Downloads directory
+     *
+     * @param sourceFile The file retrieved from Glide's cache
+     */
+    private void saveFileToDownloads(File sourceFile) {
+        try {
+            // Get the Downloads directory
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            // Create a destination file with a unique name
+            File destFile = new File(downloadsDir, "Rainbow_image_" + System.currentTimeMillis() + ".png");
+
+            // Copy the file from the cache to the Downloads directory
+            try (InputStream inputStream = new FileInputStream(sourceFile);
+                 OutputStream outputStream = new FileOutputStream(destFile)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+            }
+            // Notify the media scanner to index the new file
+            scanFileForGallery(destFile);
+            // Log the file's location for debugging
+            Log.d("Download", "File saved to " + destFile.getAbsolutePath());
+        } catch (IOException e) {
+            // Handle any errors during the file save process
+            Log.e("Download", "Failed to save file", e);
+        }
+    }
+    /**
+     * Scan The File And Notify To Media
+     *
+     * @param file The file retrieved from Glide's cache
+     */
+    private void scanFileForGallery(File file) {
+        MediaScannerConnection.scanFile(context, new String[]{file.getAbsolutePath()}, null,
+                (path, uri) -> Log.d("MediaScanner", "Scanned " + path + " -> URI: " + uri));
+    }
+
+    /**
+     * Download All Enhance Images To Device
+     */
+    public void DownloadAllImages() {
+        buttonAnimationManager.DownloadAllImagesAnimation("downloading");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Code to execute after 5 seconds
+                // For example, you can show a Toast or update the UI
+                customToastManager.showDownloadSuccessToast(R.drawable.download_success,"All Images Downloaded Successful",3);
+            }
+        }, 5000); // 5000 milliseconds = 5 seconds
+
+        for (Uri imageUrl : afterEnhanceImages) {
+            if (loadedImagesCache.containsKey(imageUrl)) {
+                // Download from the cached file
+                saveFileToDownloads(loadedImagesCache.get(imageUrl));
+                Log.d("DownloadAll", "Downloaded from cache: " + imageUrl);
+            } else {
+                // Download from Glide
+                downloadLoadedImage(imageUrl);
+            }
+        }
+    }
 
 
 
