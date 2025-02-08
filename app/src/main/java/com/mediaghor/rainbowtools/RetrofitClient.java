@@ -8,15 +8,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     private static Retrofit retrofit;
-    private static final String BASE_URL = "http://192.168.0.109:8000/";  // Your API base URL
+    private static final String BASE_URL = "http://192.168.0.101:8000/";  // Your API base URL
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
             // Configure OkHttpClient with a timeout of 60 seconds
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(60, TimeUnit.SECONDS)
-                    .readTimeout(60, TimeUnit.SECONDS)
-                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .connectTimeout(600, TimeUnit.SECONDS)
+                    .readTimeout(600, TimeUnit.SECONDS)
+                    .writeTimeout(600, TimeUnit.SECONDS)
                     .build();
 
             // Build the Retrofit instance

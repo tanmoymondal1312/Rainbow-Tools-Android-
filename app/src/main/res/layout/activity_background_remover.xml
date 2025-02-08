@@ -1,6 +1,6 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:aandroid="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,11 +23,168 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:background="@drawable/layout_bg_1">
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/txt_view_1_in_bg_remover_bdy_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Editing Skills Needed – Just Tap &amp; Remove!"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-condensed"
+                        android:letterSpacing="0.05"
+                        android:padding="10dp"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:shadowColor="#80000000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="5"
+                        android:textColor="@android:color/transparent"
+                        android:layout_gravity="center" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="horizontal"
+                            android:gravity="center|bottom">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="You Are Using Python  "
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-condensed"
+                                android:letterSpacing="0.02"
+                                android:textAlignment="center"
+                                android:shadowColor="#80000000"
+                                android:shadowDx="2"
+                                android:shadowDy="2"
+                                android:shadowRadius="5"
+                                android:textColor="#4C5EC3"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="rembg"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:fontFamily="fantasy"                                android:letterSpacing="0.02"
+                                android:textAlignment="center"
+                                android:gravity="center|bottom"
+                                android:shadowColor="#80000000"
+                                android:shadowDx="2"
+                                android:shadowDy="2"
+                                android:shadowRadius="5"
+                                android:textColor="#FFC107" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:text="😉"
+                                android:layout_gravity="center"
+                                android:gravity="center|top"
+                                android:textColor="#000000"
+                                android:textSize="40sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/bg_remover_l_2"
+                                android:layout_margin="@dimen/_20sdp"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="top">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/bg_remover_l_1"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="fitCenter"
+                                    android:layout_margin="@dimen/_10sdp"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="top">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/bg_remover_l_3"
+                                    android:adjustViewBounds="true"
+                                    android:scaleType="fitCenter"
+                                android:layout_margin="@dimen/_10sdp"/>
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_left_for_bg_removed_images_bg_remover_activity"
                     android:layout_width="0dp"
@@ -48,10 +205,7 @@
                 android:layout_width="@dimen/_200sdp"
                 android:layout_height="@dimen/_200sdp"
                 android:layout_gravity="center">
-
             </include>
-
-
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_cancel_processing_rbg_l"
                 android:layout_width="wrap_content"

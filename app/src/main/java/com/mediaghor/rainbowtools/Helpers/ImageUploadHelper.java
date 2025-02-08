@@ -68,11 +68,11 @@ public class ImageUploadHelper {
                     ArrayList<Uri> imageUrls = new ArrayList<>();
                     if(division == 1){
                         for (String imageName : imageNames) {
-                            imageUrls.add(Uri.parse("http://192.168.0.109:8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
+                            imageUrls.add(Uri.parse("http://192.168.0.101:8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
                         }
                     } else if (division == 2) {
                         for (String imageName : imageNames) {
-                            imageUrls.add(Uri.parse("http://192.168.0.109:8000/image-optimization/get_enhance_images/" + imageName));  // Assuming media URL pattern
+                            imageUrls.add(Uri.parse("http://192.168.0.101:8000/image-optimization/get_enhance_images/" + imageName));  // Assuming media URL pattern
                         }
                     }
                     callback.onImageUploadSuccess(imageUrls);

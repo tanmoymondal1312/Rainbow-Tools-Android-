@@ -1,13 +1,19 @@
 package com.mediaghor.rainbowtools.OthersClasses;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -17,6 +23,7 @@ public class ButtonAnimationManager {
 
     private Context context;
     private Activity activity;
+    private ValueAnimator animator;
 
     // Constructor to initialize with Activity context
     public ButtonAnimationManager(Context context) {
@@ -200,6 +207,49 @@ public class ButtonAnimationManager {
 
         }
     }
+
+    // 🌈 Method to apply Rainbow Gradient to a TextView
+    // 🌈 Method to Apply & Animate Rainbow Gradient on TextView
+    public void applyMovingRainbowGradient(TextView textView) {
+        if (textView == null) return;
+
+        // Define rainbow colors
+        int[] rainbowColors = {
+                Color.RED, Color.MAGENTA, Color.BLUE,
+                Color.CYAN, Color.GREEN, Color.YELLOW, Color.RED
+        };
+
+        float textWidth = textView.getPaint().measureText(textView.getText().toString());
+        float textSize = textView.getTextSize();
+
+        // Create an animator to shift the gradient position
+        animator = ValueAnimator.ofFloat(0, textWidth * 2); // Loop across text width
+        animator.setDuration(4000); // 4 seconds
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setRepeatMode(ValueAnimator.RESTART);
+
+        animator.addUpdateListener(animation -> {
+            float animatedValue = (float) animation.getAnimatedValue();
+
+            Shader textShader = new LinearGradient(
+                    animatedValue, 0, animatedValue + textWidth, textSize,
+                    rainbowColors, null, Shader.TileMode.MIRROR
+            );
+
+            textView.getPaint().setShader(textShader);
+            textView.invalidate(); // Refresh the view
+        });
+
+        animator.start(); // Start animation
+
+        // **Add Stroke (Outline) for Readability**
+        textView.setShadowLayer(5, 2, 2, Color.BLACK);
+        textView.setTextColor(Color.WHITE);
+        textView.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
+        textView.getPaint().setStrokeWidth(3);
+    }
+
+
 
 
 

@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
@@ -42,8 +41,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -56,7 +55,6 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
     private boolean isUploading;
     private OnImageListEmptyListener imageListEmptyListener;
     ButtonAnimationManager buttonAnimationManager;
-    private final Map<Uri, File> loadedImagesCache = new HashMap<>();
     CustomToastManager customToastManager;
 
 
@@ -123,13 +121,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
             holder.singleImageDownload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (loadedImagesCache.containsKey(uriAfterEnhance)) {
-                        // Download from the cached file
-                        saveFileToDownloads(loadedImagesCache.get(uriAfterEnhance));
-                    } else {
-                        // Download from Glide
-                        downloadLoadedImage(uriAfterEnhance);
-                    }
+                    downloadLoadedImage(uriAfterEnhance);
                     customToastManager.showDownloadSuccessToast(R.drawable.download_success,"Successfully Downloaded The Image",2);
 
                 }
@@ -180,8 +172,6 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
     private void loadBeforeEnhanceImage(ImageViewHolder holder, Uri uri) {
         Glide.with(context)
                 .load(uri)
-                .placeholder(R.drawable.placeholder_image)
-                .dontAnimate() // Optional: Skip animations for faster transitions
                 .into(holder.ImageViewBeforeEnhance);
 
     }
@@ -242,48 +232,54 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
      * @param holder The ViewHolder containing the ImageView.
      * @param uri    The URI of the processed image to load.
      */
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     private void loadImagesAfterEnhance(ImageViewHolder holder, Uri uri, int position) {
-        // Get the corresponding before-enhance image
         Uri beforeEnhanceUri = beforeEnhanceImages.get(position);
 
-        // Load the before-enhance image with a blur effect
+        RequestOptions blurOptions = new RequestOptions()
+                .transform(new BlurTransformation(25, 3)) // Blur effect
+                .placeholder(R.drawable.placeholder_image) // Optional: add a placeholder image
+                .error(R.drawable.server_error); // Optional: add an error image
+
         Glide.with(context)
                 .load(uri)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .thumbnail(Glide.with(context)
                         .load(beforeEnhanceUri)
-                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(25, 3))) // Apply blur effect
+                        .apply(blurOptions)
                 )
-                .transition(DrawableTransitionOptions.withCrossFade(1000)) // Smooth cross-fade animation
+                .transition(DrawableTransitionOptions.withCrossFade(1000)) // Smooth transition
+                .error(R.drawable.server_error) // Fallback image on failure
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model,
                                                 Target<Drawable> target, boolean isFirstResource) {
+                        Log.e("GlideError", "Failed to load enhanced image", e);
                         return false;
                     }
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model,
                                                    Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-                        // Apply initial clipping when the image is loaded
+                        holder.ImageViewAfterEnhance.setImageDrawable(resource);
                         buttonAnimationManager.CongressCuttingPaperAnimation("stop");
+
                         holder.ImageViewAfterEnhance.post(() -> {
                             holder.slider.setProgress(50);
-                            int initialProgress = holder.slider.getProgress();
-                            handleSeekBarProgress(holder, initialProgress);
+                            handleSeekBarProgress(holder, holder.slider.getProgress());
                         });
 
                         sliderLineSliderUnHide(holder);
                         animateSlider(holder);
                         setupSeekBar(holder);
-                        cacheLoadedImage(uri);
 
                         return false;
                     }
                 })
                 .into(holder.ImageViewAfterEnhance);
     }
+
+
 
 
     /**
@@ -419,29 +415,6 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
 
 
     /**
-     * Cache a loaded image as a File
-     *
-     * @param imageUrl The URL of the loaded image
-     */
-    private void cacheLoadedImage(Uri imageUrl) {
-        Glide.with(context)
-                .asFile()
-                .load(imageUrl)
-                .into(new CustomTarget<File>() {
-                    @Override
-                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                        loadedImagesCache.put(imageUrl, resource);
-                        Log.d("Cache", "Image cached: " + imageUrl.toString());
-                    }
-
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                        Log.d("Cache", "Cache cleared for: " + imageUrl.toString());
-                    }
-                });
-    }
-
-    /**
      * Download a loaded image directly
      *
      * @param imageUrl The URL of the image to download
@@ -519,18 +492,11 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         }, 5000); // 5000 milliseconds = 5 seconds
 
         for (Uri imageUrl : afterEnhanceImages) {
-            if (loadedImagesCache.containsKey(imageUrl)) {
                 // Download from the cached file
-                saveFileToDownloads(loadedImagesCache.get(imageUrl));
-                Log.d("DownloadAll", "Downloaded from cache: " + imageUrl);
-            } else {
+
                 // Download from Glide
                 downloadLoadedImage(imageUrl);
             }
         }
-    }
-
-
-
 
 }

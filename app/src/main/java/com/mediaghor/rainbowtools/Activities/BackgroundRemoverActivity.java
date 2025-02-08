@@ -3,11 +3,17 @@ package com.mediaghor.rainbowtools.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -15,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -33,6 +40,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.bumptech.glide.Glide;
 import com.mediaghor.rainbowtools.Adapter.BackgroundRemovedImageAdapter;
 
 import com.mediaghor.rainbowtools.Adapter.SelectedImagesAdapterForBgr;
@@ -60,6 +68,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     private RecyclerView RV_SelectedImages,RV_ProcessedImages;
     LottieAnimationView lottieAnimationSelectImages,lottieAnimationGenerateImages,download,downloading,lottieGeneratingProgressBar;
     View ProgressingIncluded;
+    TextView textView_1,textView_2;
 
 
 
@@ -224,11 +233,16 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         cancel_processing = findViewById(R.id.btn_cancel_processing_rbg_l);
         ProgressingIncluded = findViewById(R.id.lottie_generating_in_bgr_l);
         lottieGeneratingProgressBar = findViewById(R.id.lottieAnimation_generating);
+        textView_1 = findViewById(R.id.txt_view_1_in_bg_remover_bdy_layout);
         //Implementation Everything
         buttonAnimationManager = new ButtonAnimationManager(this);
         customToastManager = new CustomToastManager(this);
         checkConnection = new CheckConnection(this);
         //On create animation and visibility components start
+
+
+
+        buttonAnimationManager.applyMovingRainbowGradient(textView_1);
         buttonAnimationManager.SelectImageAnimation("loop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("disable");
         buttonAnimationManager.DownloadAllImagesAnimation("disable");
@@ -346,6 +360,27 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    @Override
+    public void onBackPressed() {
+        new Thread(() -> {
+            Glide.get(getApplicationContext()).clearDiskCache(); // Clears disk cache
+        }).start();
+
+        Glide.get(getApplicationContext()).clearMemory(); // Clears memory cache
+        super.onBackPressed();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        new Thread(() -> {
+            Glide.get(getApplicationContext()).clearDiskCache(); // Clears disk cache
+        }).start();
+
+        Glide.get(getApplicationContext()).clearMemory(); // Clears memory cache
+        super.onDestroy();
     }
 
 }

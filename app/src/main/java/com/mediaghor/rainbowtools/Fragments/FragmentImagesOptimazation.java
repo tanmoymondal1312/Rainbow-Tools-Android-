@@ -43,7 +43,7 @@ public class FragmentImagesOptimazation extends Fragment {
         ));
         cardItemsList.add(new CardItemsModel(
                 "Photo Optimizer",
-                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.bg_remover
+                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.img_enhance_card_tmplt
         ));
         cardItemsList.add(new CardItemsModel(
                 "Image Resizer",

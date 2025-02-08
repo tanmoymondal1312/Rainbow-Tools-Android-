@@ -60,7 +60,7 @@ public class CheckConnection {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url("http://192.168.0.109:8000/connection-status/") // Django backend URL
+                        .url("http://192.168.0.101:8000/connection-status/") // Django backend URL
                         .build();
 
                 try {

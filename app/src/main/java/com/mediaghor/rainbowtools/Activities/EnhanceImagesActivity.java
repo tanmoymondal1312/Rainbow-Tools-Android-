@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.bumptech.glide.Glide;
 import com.mediaghor.rainbowtools.Adapter.EnhanceImagesAdapter;
 import com.mediaghor.rainbowtools.Helpers.CheckConnection;
 import com.mediaghor.rainbowtools.Helpers.ImagePermissionHandler;
@@ -351,4 +352,28 @@ public class EnhanceImagesActivity extends AppCompatActivity {
         );
 
     }//On Create End ===========================================================
+
+    @Override
+    public void onBackPressed() {
+        new Thread(() -> {
+            Glide.get(getApplicationContext()).clearDiskCache(); // Clears disk cache
+        }).start();
+
+        Glide.get(getApplicationContext()).clearMemory(); // Clears memory cache
+        super.onBackPressed();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        new Thread(() -> {
+            Glide.get(getApplicationContext()).clearDiskCache(); // Clears disk cache
+        }).start();
+
+        Glide.get(getApplicationContext()).clearMemory(); // Clears memory cache
+        super.onDestroy();
+    }
+
+
+
 }
