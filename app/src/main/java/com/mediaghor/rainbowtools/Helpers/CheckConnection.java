@@ -6,6 +6,8 @@ import android.net.NetworkCapabilities;
 import android.os.Build;
 import android.util.Log;
 
+import com.mediaghor.rainbowtools.R;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,10 +20,12 @@ import okhttp3.Response;
 public class CheckConnection {
 
     private Context context;
+    private String serverIp;
 
     // Constructor to initialize the context
     public CheckConnection(Context context) {
         this.context = context;
+        this.serverIp = context.getResources().getString(R.string.serverIp);
     }
 
     // Method to check the internet connection status
@@ -60,7 +64,7 @@ public class CheckConnection {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url("http://192.168.0.101:8000/connection-status/") // Django backend URL
+                        .url("http://"+serverIp+":8000/connection-status/") // Django backend URL
                         .build();
 
                 try {

@@ -46,8 +46,8 @@ public class FragmentImagesOptimazation extends Fragment {
                 "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.img_enhance_card_tmplt
         ));
         cardItemsList.add(new CardItemsModel(
-                "Image Resizer",
-                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.bg_remover
+                "Text Extractor",
+                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.txt_extraxt
         ));
         cardItemsList.add(new CardItemsModel(
                 "Background Remover",

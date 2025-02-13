@@ -21,10 +21,13 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
-            android:name=".Activities.EnhanceImagesActivity"
+            android:name=".Activities.TextExtractorActivity"
             android:exported="false"
             android:theme="@style/Theme.RainbowTools"/>
-
+        <activity
+            android:name=".Activities.EnhanceImagesActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RainbowTools" />
         <activity
             android:name=".Activities.AllimagesActivity"
             android:exported="false"

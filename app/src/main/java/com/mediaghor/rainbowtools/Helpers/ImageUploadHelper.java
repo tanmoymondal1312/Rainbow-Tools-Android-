@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.mediaghor.rainbowtools.Api;
 import com.mediaghor.rainbowtools.Models.ImageUploadResponse;
+import com.mediaghor.rainbowtools.R;
 import com.mediaghor.rainbowtools.RetrofitClient;
 
 import okhttp3.MediaType;
@@ -32,10 +33,12 @@ public class ImageUploadHelper {
     public int division;
     private Context context;
     private Call<ImageUploadResponse> currentUploadCall; // Track the current upload call
+    String serverIp;
 
     public ImageUploadHelper(Context context,int division) {
         this.context = context;
         this.division = division;
+        this.serverIp = context.getResources().getString(R.string.serverIp);
     }
 
     // Method to upload images
@@ -50,7 +53,7 @@ public class ImageUploadHelper {
         }
 
         // Create the Retrofit API service
-        Api service = RetrofitClient.getRetrofitInstance().create(Api.class);
+        Api service = RetrofitClient.getRetrofitInstance(context).create(Api.class);
         if (division == 1){
             currentUploadCall = service.uploadImages(parts); // Store the call reference
         } else if (division == 2) {
@@ -68,11 +71,11 @@ public class ImageUploadHelper {
                     ArrayList<Uri> imageUrls = new ArrayList<>();
                     if(division == 1){
                         for (String imageName : imageNames) {
-                            imageUrls.add(Uri.parse("http://192.168.0.101:8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
+                            imageUrls.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
                         }
                     } else if (division == 2) {
                         for (String imageName : imageNames) {
-                            imageUrls.add(Uri.parse("http://192.168.0.101:8000/image-optimization/get_enhance_images/" + imageName));  // Assuming media URL pattern
+                            imageUrls.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_enhance_images/" + imageName));  // Assuming media URL pattern
                         }
                     }
                     callback.onImageUploadSuccess(imageUrls);

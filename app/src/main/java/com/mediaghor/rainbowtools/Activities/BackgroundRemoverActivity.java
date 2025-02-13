@@ -167,6 +167,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         RV_ProcessedImages.setAdapter(adapter2);
     }
     private void SetSelectedImagesInRecycler(){
+        buttonAnimationManager.ManageSunBackground("play");
         buttonAnimationManager.SelectImageAnimation("unloop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("enable");
         adapter = new SelectedImagesAdapterForBgr(this, selectedUris);
@@ -246,6 +247,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         buttonAnimationManager.SelectImageAnimation("loop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("disable");
         buttonAnimationManager.DownloadAllImagesAnimation("disable");
+        buttonAnimationManager.ManageSunBackground("disable");
         cancel_processing.setVisibility(View.GONE);
         hideLoading();
 

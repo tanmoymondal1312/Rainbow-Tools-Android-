@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.mediaghor.rainbowtools.Activities.BackgroundRemoverActivity;
 import com.mediaghor.rainbowtools.Activities.EnhanceImagesActivity;
+import com.mediaghor.rainbowtools.Activities.TextExtractorActivity;
 import com.mediaghor.rainbowtools.Models.CardItemsModel;
 import com.mediaghor.rainbowtools.R;
 
@@ -65,11 +66,18 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
                 intent = new Intent(context, BackgroundRemoverActivity.class);
             }else if(currentItem.getText().equals("Photo Optimizer")){
                 intent = new Intent(context, EnhanceImagesActivity.class);
+            } else if (currentItem.getText().equals("Text Extractor")) {
+                Log.d("LINE70","Condition True");
+                intent = new Intent(context, TextExtractorActivity.class);
+
             }
 
             // Start the activity if an intent is created
             if (intent != null) {
                 context.startActivity(intent);
+            }else {
+                Log.d("LINE70","intent Null");
+
             }
         });
     }

@@ -49,7 +49,7 @@ public class AllimagesActivity extends AppCompatActivity implements OnItemClickL
 
         // Set up RecyclerView
 
-        ImageAdapter adapter = new ImageAdapter(this, imageUris,40);
+        ImageAdapter adapter = new ImageAdapter(this, imageUris,5);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3)); // 3 columns
         recyclerView.setAdapter(adapter);
 

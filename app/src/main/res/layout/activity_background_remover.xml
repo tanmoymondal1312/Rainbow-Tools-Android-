@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
         <include
             android:id="@+id/layout_toolbar_included"
-            layout="@layout/toolbar_bg_remover" />
+            layout="@layout/toolbar_bg_remover"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -24,10 +24,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="@drawable/layout_bg_1">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/sun_background_in_bg_remove_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    aandroid:lottie_autoPlay="true"
+                    aandroid:lottie_loop="true"
+                    aandroid:lottie_fileName="sun_android_layout_bg.json"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
