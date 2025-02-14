@@ -46,7 +46,7 @@ public class FragmentImagesOptimazation extends Fragment {
                 "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.img_enhance_card_tmplt
         ));
         cardItemsList.add(new CardItemsModel(
-                "Text Extractor",
+                "Text Extractor From Images",
                 "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.txt_extraxt
         ));
         cardItemsList.add(new CardItemsModel(

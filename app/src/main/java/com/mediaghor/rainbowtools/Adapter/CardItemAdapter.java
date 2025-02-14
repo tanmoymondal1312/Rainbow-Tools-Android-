@@ -66,8 +66,7 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
                 intent = new Intent(context, BackgroundRemoverActivity.class);
             }else if(currentItem.getText().equals("Photo Optimizer")){
                 intent = new Intent(context, EnhanceImagesActivity.class);
-            } else if (currentItem.getText().equals("Text Extractor")) {
-                Log.d("LINE70","Condition True");
+            } else if (currentItem.getText().equals("Text Extractor From Images")) {
                 intent = new Intent(context, TextExtractorActivity.class);
 
             }
