@@ -58,6 +58,8 @@ public class ImageUploadHelper {
             currentUploadCall = service.uploadImages(parts); // Store the call reference
         } else if (division == 2) {
             currentUploadCall = service.uploadImagesForEnhanceImages(parts); // Store the call reference
+        } else if (division == 3) {
+            currentUploadCall = service.uploadImagesForTextExtract(parts); // Store the call reference
         }
 
 
@@ -67,8 +69,11 @@ public class ImageUploadHelper {
             public void onResponse(Call<ImageUploadResponse> call, Response<ImageUploadResponse> response) {
                 if (response.isSuccessful()) {
                     // On success, get the image URLs from the response
+                    Log.d("TXT","Response Accepted");
                     ArrayList<String> imageNames = (ArrayList<String>) response.body().getImageNames();
                     ArrayList<Uri> imageUrls = new ArrayList<>();
+                    Log.d("TXT",imageNames.toString());
+
                     if(division == 1){
                         for (String imageName : imageNames) {
                             imageUrls.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
@@ -76,6 +81,10 @@ public class ImageUploadHelper {
                     } else if (division == 2) {
                         for (String imageName : imageNames) {
                             imageUrls.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_enhance_images/" + imageName));  // Assuming media URL pattern
+                        }
+                    } else if (division == 3) {
+                        for (String imageName : imageNames) {
+                            imageUrls.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_extracted_texts/" + imageName));  // Assuming media URL pattern
                         }
                     }
                     callback.onImageUploadSuccess(imageUrls);

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_8sdp"
+    android:background="@android:color/white"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_edit_text_ext_recycler"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:adjustViewBounds="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:background="@drawable/ripple_effect"                android:clickable="true"
+                android:contentDescription="Edit Texts"
+                android:focusable="true"
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/edit_pen" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/anim_copy_txt_in_ext"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_gravity="center"
+                android:scaleX="2"
+                android:scaleY="2"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="copy_btn.json"
+                app:lottie_loop="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/colorful_border">
+
+                <FrameLayout
+                    android:id="@+id/frame_lay_1_in_ext_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_297sdp"
+                    android:background="@drawable/noise_texture">
+
+                    <androidx.core.widget.NestedScrollView
+                        android:id="@+id/scrollView_in_ext_card_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/texts_is_ext"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:lineSpacingExtra="4dp"
+                                android:padding="5dp"
+                                android:text="Very long text..."
+                                android:textColor="@android:color/black"
+                                android:textIsSelectable="true"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </androidx.core.widget.NestedScrollView>
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/btn_scroll_up_ext_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/up_arrow_1" />
+
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/btn_scroll_down_ext_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_40sdp"
+                        android:adjustViewBounds="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/down_arrow_1" />
+
+                </FrameLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SAVE AS"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:fontFamily="sans-serif-black"
+                    android:padding="8dp"
+                    android:textColor="#000000"
+                    android:shadowColor="#80000000"
+                    android:shadowRadius="4"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/fancy_text_bg"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="8dp"
+                android:layout_marginBottom="5dp">
+
+                <LinearLayout
+                    android:layout_width="@dimen/_41sdp"
+                    android:layout_height="@dimen/_41sdp"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/colorful_border_bg_2"
+                    android:gravity="center">
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/btn_save_as_txt_ext_item"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:src="@drawable/ext_txt"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:background="@drawable/ripple_effect"
+                        android:contentDescription="TXT File"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter" />
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="@dimen/_41sdp"
+                    android:layout_height="@dimen/_41sdp"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/colorful_border_bg_2"
+                    android:gravity="center">
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/btn_save_as_pdf_ext_item"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:src="@drawable/ext_pdf"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:background="@drawable/ripple_effect"
+                        android:contentDescription="TXT File"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="@dimen/_41sdp"
+                    android:layout_height="@dimen/_41sdp"
+                    android:orientation="vertical"
+                    android:background="@drawable/colorful_border_bg_2"
+                    android:gravity="center">
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/btn_save_as_docx_ext_item"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:src="@drawable/ext_docx"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:background="@drawable/ripple_effect"
+                        android:contentDescription="TXT File"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+

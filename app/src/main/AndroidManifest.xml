@@ -21,9 +21,14 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
+            android:name=".Dialog.TextEditorFullScreenDialog"
+            android:theme="@style/FullScreenDialogTheme"
+            android:launchMode="singleTop"
+            android:exported="false" />
+        <activity
             android:name=".Activities.TextExtractorActivity"
             android:exported="false"
-            android:theme="@style/Theme.RainbowTools"/>
+            android:theme="@style/Theme.RainbowTools" />
         <activity
             android:name=".Activities.EnhanceImagesActivity"
             android:exported="false"

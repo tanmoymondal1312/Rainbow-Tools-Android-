@@ -23,4 +23,9 @@ public interface Api{
     Call<ImageUploadResponse> uploadImagesForEnhanceImages(
             @Part List<MultipartBody.Part> images
     );
+    @Multipart
+    @POST("image-optimization/extract-texts/")
+    Call<ImageUploadResponse> uploadImagesForTextExtract(
+            @Part List<MultipartBody.Part> images
+    );
 }

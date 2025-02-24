@@ -1,5 +1,6 @@
 package com.mediaghor.rainbowtools.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -22,6 +24,8 @@ public class SelectedImagesAdapterEXT extends RecyclerView.Adapter<SelectedImage
     private final ArrayList<Uri> selectedUris;
     private final Context context;
     ButtonAnimationManager buttonAnimationManager;
+    private boolean isUploading;
+
 
 
     public SelectedImagesAdapterEXT(Context context, ArrayList<Uri> selectedUris) {
@@ -40,7 +44,7 @@ public class SelectedImagesAdapterEXT extends RecyclerView.Adapter<SelectedImage
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SelectedImagesAdapterEXT.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Uri uri = selectedUris.get(position);
 
         // Load the image using Glide for efficiency
@@ -48,6 +52,20 @@ public class SelectedImagesAdapterEXT extends RecyclerView.Adapter<SelectedImage
                 .load(uri)
                 .placeholder(R.drawable.placeholder_image) // Optional: Set a placeholder image
                 .into(holder.imageView);
+
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RemoveItem(position);
+            }
+        });
+
+        if(isUploading){
+            buttonAnimationManager.RemoveCrossButtonEXT("disable", holder.itemView);
+        }else {
+            buttonAnimationManager.RemoveCrossButtonEXT("enable", holder.itemView);
+
+        }
     }
 
     @Override
@@ -67,4 +85,30 @@ public class SelectedImagesAdapterEXT extends RecyclerView.Adapter<SelectedImage
 
         }
     }
+
+
+
+    public void RemoveItem(int position){
+        selectedUris.remove(position);
+        if(selectedUris.size() == 0){
+            buttonAnimationManager.SelectImageAnimation("loop_animation");
+            buttonAnimationManager.GeneratingButtonAnimation("disable");
+        }
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, selectedUris.size());
+    }
+
+    public ArrayList<Uri> getFinalSelectedUris() {
+        return selectedUris;
+    }
+
+    /**
+     * Setting Uploading State Eg If Uploading Then Made Remove Animation Button Disable else Enable
+     * @param state Set The state That if uploading or not
+     */
+    public void setUploadingState(boolean state) {
+        isUploading = state;
+        notifyDataSetChanged();
+    }
+
 }

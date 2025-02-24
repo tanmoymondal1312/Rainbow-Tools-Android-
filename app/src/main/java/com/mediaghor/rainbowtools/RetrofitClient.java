@@ -19,9 +19,9 @@ public class RetrofitClient {
 
             // Configure OkHttpClient with a timeout of 60 seconds
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(60, TimeUnit.SECONDS)
-                    .readTimeout(60, TimeUnit.SECONDS)
-                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .connectTimeout(500, TimeUnit.SECONDS)
+                    .readTimeout(500, TimeUnit.SECONDS)
+                    .writeTimeout(500, TimeUnit.SECONDS)
                     .build();
 
             // Build the Retrofit instance

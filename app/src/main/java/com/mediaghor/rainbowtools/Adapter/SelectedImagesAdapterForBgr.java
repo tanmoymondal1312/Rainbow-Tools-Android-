@@ -2,6 +2,7 @@ package com.mediaghor.rainbowtools.Adapter;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +65,7 @@ public class SelectedImagesAdapterForBgr extends RecyclerView.Adapter<SelectedIm
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, selectedUris.size());
         });
+
     }
 
     @Override

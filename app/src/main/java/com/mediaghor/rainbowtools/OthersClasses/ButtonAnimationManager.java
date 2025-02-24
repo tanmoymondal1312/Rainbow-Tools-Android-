@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.view.menu.MenuView;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.mediaghor.rainbowtools.R;
 
@@ -265,6 +267,50 @@ public class ButtonAnimationManager {
         }
     }
 
+    public void RemoveCrossButtonEXT(String state, View itemview){
+        ImageView imageView;
+        imageView = itemview.findViewById(R.id.btn_cancel_from_selected_images);
+
+        switch (state){
+            case"disable":
+                imageView.setVisibility(View.GONE);
+                break;
+
+            case"enable":
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setClickable(true);
+                imageView.setEnabled(true);
+        }
+    }
+    public void AnimCopyTextsManager(String state, View itemView) {
+        LottieAnimationView copyAnim = itemView.findViewById(R.id.anim_copy_txt_in_ext);
+
+        switch (state) {
+            case "initial":
+                Log.d("LottieDebug", "In Initial");
+
+                copyAnim.addLottieOnCompositionLoadedListener(composition -> {
+                    copyAnim.setProgress(0.75f);  // Move to 75%
+                    copyAnim.pauseAnimation();    // Pause animation
+                });
+                break;
+
+            case "play":
+                Log.d("LottieDebug", "Playing animation from 75%");
+
+                copyAnim.setMinProgress(0.75f);  // Start from 75%
+                copyAnim.setMaxProgress(1.0f);   // Play until 100%
+                copyAnim.playAnimation();        // Start playing
+
+                copyAnim.addAnimatorUpdateListener(animation -> {
+                    if (copyAnim.getProgress() >= 1.0f) {  // If animation reaches the end
+                        copyAnim.setProgress(0.75f);  // Move back to 75%
+                        copyAnim.pauseAnimation();    // Pause animation
+                    }
+                });
+                break;
+        }
+    }
 
 
 
