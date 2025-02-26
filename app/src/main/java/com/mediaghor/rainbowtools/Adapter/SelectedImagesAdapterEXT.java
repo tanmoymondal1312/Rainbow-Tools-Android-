@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -25,6 +27,7 @@ public class SelectedImagesAdapterEXT extends RecyclerView.Adapter<SelectedImage
     private final Context context;
     ButtonAnimationManager buttonAnimationManager;
     private boolean isUploading;
+    private boolean cardColor;
 
 
 
@@ -60,8 +63,16 @@ public class SelectedImagesAdapterEXT extends RecyclerView.Adapter<SelectedImage
             }
         });
 
+        if(cardColor){
+            holder.itemView.setForeground(ContextCompat.getDrawable(holder.itemView.getContext(), R.color.transparent_gray)); // Set foreground back
+
+        }else {
+            holder.itemView.setForeground(null);  // Remove foreground
+        }
+
         if(isUploading){
             buttonAnimationManager.RemoveCrossButtonEXT("disable", holder.itemView);
+
         }else {
             buttonAnimationManager.RemoveCrossButtonEXT("enable", holder.itemView);
 
@@ -77,6 +88,7 @@ public class SelectedImagesAdapterEXT extends RecyclerView.Adapter<SelectedImage
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         ImageView deleteButton;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -108,6 +120,11 @@ public class SelectedImagesAdapterEXT extends RecyclerView.Adapter<SelectedImage
      */
     public void setUploadingState(boolean state) {
         isUploading = state;
+        notifyDataSetChanged();
+    }
+
+    public void setCardsColorBlur(boolean state){
+        cardColor = state;
         notifyDataSetChanged();
     }
 

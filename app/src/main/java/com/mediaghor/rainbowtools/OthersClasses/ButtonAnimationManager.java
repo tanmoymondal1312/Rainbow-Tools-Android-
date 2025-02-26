@@ -313,6 +313,31 @@ public class ButtonAnimationManager {
     }
 
 
+    public void ExtractingAnim(String state){
+        if (context instanceof Activity) {
+            LottieAnimationView generatingAnimation = activity.findViewById(R.id.extracting_anim_in_ext_lay);
+            switch (state){
+                case "play":
+                    generatingAnimation.setVisibility(View.VISIBLE);
+                    generatingAnimation.setEnabled(true);
+                    generatingAnimation.loop(true);
+                    generatingAnimation.setSpeed(0.5f);
+                    generatingAnimation.playAnimation();
+                    break;
+                case "stop":
+                    generatingAnimation.setVisibility(View.GONE);
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Invalid state: " + state);
+            }
+        }
+        else {
+            Log.e("GeneratingButtonAnimation", "Context is not an instance of Activity!");
+        }
+    }
+
+
 
 
 

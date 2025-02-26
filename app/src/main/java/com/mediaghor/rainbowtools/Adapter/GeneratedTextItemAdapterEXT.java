@@ -64,6 +64,7 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
 
     private final List<Uri> apiUrlList;
     private final ArrayList<String> texts = new ArrayList<>();
+    public ArrayList<Uri> finalImageUri = new ArrayList<>();
     private final Context context;
     private final ButtonAnimationManager buttonAnimationManager;
     private final Handler handler = new Handler();
@@ -72,10 +73,11 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
     private final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
 
-    public GeneratedTextItemAdapterEXT(Context context, List<Uri> apiUrlList) {
+    public GeneratedTextItemAdapterEXT(Context context, List<Uri> apiUrlList,ArrayList<Uri> finalImageUri) {
         this.context = context;
         this.apiUrlList = apiUrlList;
         this.buttonAnimationManager = new ButtonAnimationManager(context);
+        this.finalImageUri = finalImageUri;
 
 
         for (int i = 0; i < apiUrlList.size(); i++) {
@@ -96,6 +98,7 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
 
 
         holder.textView.setText(texts.get(position));
+
 
         // If data is still "Loading...", fetch it
         if (texts.get(position).equals("Loading...")) {
@@ -149,10 +152,12 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
             public void onClick(View v) {
                 String content = holder.textView.getText().toString();
                 int position = holder.getAdapterPosition();
-
+                Uri imgUri = finalImageUri.get(position);
                 Intent intent = new Intent(context, TextEditorFullScreenDialog.class);
+
                 intent.putExtra("texts", content);
                 intent.putExtra("position", position);
+                intent.putExtra("imgUri",imgUri);
 
 
                 // Ensure the context is an Activity before casting
@@ -402,6 +407,9 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
             Log.e("RE_EXT", "Invalid position: " + position);
         }
     }
+
+
+
 
 
 

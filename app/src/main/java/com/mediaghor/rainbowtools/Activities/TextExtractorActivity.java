@@ -18,7 +18,10 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +46,8 @@ import com.mediaghor.rainbowtools.Helpers.CheckConnection;
 import com.mediaghor.rainbowtools.Helpers.ImagePermissionHandler;
 import com.mediaghor.rainbowtools.Helpers.ImageUploadHelper;
 import com.mediaghor.rainbowtools.OthersClasses.ButtonAnimationManager;
+import com.mediaghor.rainbowtools.OthersClasses.CustomNetworkDialog;
+import com.mediaghor.rainbowtools.OthersClasses.CustomToastManager;
 import com.mediaghor.rainbowtools.R;
 
 import java.util.ArrayList;
@@ -52,17 +57,20 @@ import java.util.concurrent.Executors;
 
 public class TextExtractorActivity extends AppCompatActivity {
 
-    ImageButton toolbarBackBtn;
+    ImageButton toolbarBackBtn,selectImagesFromBdy;
     LottieAnimationView lottieAnimationSelectImages,generateButton,downloadAllImagesLottie;
     RecyclerView selectedImagesRecycler,generatedTextRecycler;
+    Button btnCancelProcessing;
+    ImageView imgHomeBg;
 
     private ArrayList<Uri>ImagesFromDevice;
     private int originalWidth;
     public String serverIp;
 
     private ArrayList<Uri> TextsFilesUris = new ArrayList<>();
+    public ArrayList<Uri> finalImageUri = new ArrayList<>();
 
-
+    LinearLayout linearBdy,LinearRecuclerViewBdyctrlBg;
     TextView toolbarTitle;
 
     ButtonAnimationManager buttonAnimationManager;
@@ -71,7 +79,34 @@ public class TextExtractorActivity extends AppCompatActivity {
     GeneratedTextItemAdapterEXT generatedTextItemAdapterEXT;
     private CheckConnection checkConnection;
     ImageUploadHelper imageUploadHelper;
+    CustomToastManager customToastManager;
 
+
+
+
+
+    public void startExtractingUiComponents() {
+        linearBdy.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent_gray));
+
+        if (buttonAnimationManager != null) {
+            buttonAnimationManager.GeneratingButtonAnimation("animated");
+            buttonAnimationManager.ExtractingAnim("play");
+        }
+
+        btnCancelProcessing.setVisibility(View.VISIBLE);
+        btnCancelProcessing.setEnabled(true);
+    }
+
+
+    public void disabledExtractingUiComponents(){
+        linearBdy.setBackground(null);
+        if (buttonAnimationManager != null) {
+            buttonAnimationManager.GeneratingButtonAnimation("disable");
+            buttonAnimationManager.ExtractingAnim("stop");
+        }
+
+        btnCancelProcessing.setVisibility(View.GONE);
+    }
 
 
 
@@ -87,6 +122,9 @@ public class TextExtractorActivity extends AppCompatActivity {
                     public void onImageUploadSuccess(ArrayList<Uri> imageUrls) {
                         // Switch back to the UI thread for UI updates
                         mainThreadHandler.post(() -> {
+                            customToastManager.showDownloadSuccessToast(R.drawable.icn_success,"Extract Successful",2);
+
+                            disabledExtractingUiComponents();
                             TextExtractorActivity.this.TextsFilesUris = imageUrls;
                             SetUpGeneratedTextRecycler();
                             Log.d("TXT","Response Accepted");
@@ -99,7 +137,15 @@ public class TextExtractorActivity extends AppCompatActivity {
                     public void onImageUploadFailure(String errorMessage) {
                         // Switch back to the UI thread for UI updates
                         mainThreadHandler.post(() -> {
-                            //Hande If cancel or connection failed
+                            linearBdy.setBackground(null);
+                            if (buttonAnimationManager != null) {
+                                buttonAnimationManager.ExtractingAnim("stop");
+                                buttonAnimationManager.GeneratingButtonAnimation("enable");
+                                customToastManager.showDownloadSuccessToast(R.drawable.baseline_error_outline_24,"Something Wrong",2);
+                                adapter.setCardsColorBlur(false);
+                            }
+
+                            btnCancelProcessing.setVisibility(View.GONE);
                             Log.d("TXT","POst Failed");
                         });
                     }
@@ -124,7 +170,10 @@ public class TextExtractorActivity extends AppCompatActivity {
 
     private void SetUpImagesLinearly(){
         // Set RecyclerView to Linear Layout
+
         adapter.setUploadingState(true);
+        adapter.setCardsColorBlur(false);
+
         LinearLayoutManager linearLayoutManager__2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         selectedImagesRecycler.setLayoutManager(linearLayoutManager__2);
         // Set RecyclerView Width to 40dp
@@ -143,15 +192,7 @@ public class TextExtractorActivity extends AppCompatActivity {
 
 
     private void SetUpGeneratedTextRecycler(){
-
-
         SetUpImagesLinearly();
-
-//        TextsFilesUris.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_extracted_texts/20250215180328_cdf237ef.txt"));
-//        TextsFilesUris.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_extracted_texts/20250216152152_75429cab.txt"));
-
-
-
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         generatedTextRecycler.setLayoutManager(linearLayoutManager);
@@ -163,7 +204,7 @@ public class TextExtractorActivity extends AppCompatActivity {
         generatedTextRecycler.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
 
-        generatedTextItemAdapterEXT = new GeneratedTextItemAdapterEXT(this,TextsFilesUris);
+        generatedTextItemAdapterEXT = new GeneratedTextItemAdapterEXT(this,TextsFilesUris,finalImageUri);
         generatedTextRecycler.setAdapter(generatedTextItemAdapterEXT);
 
         ViewGroup.LayoutParams params__2 = generatedTextRecycler.getLayoutParams();
@@ -176,7 +217,8 @@ public class TextExtractorActivity extends AppCompatActivity {
 
     }
     private void SetSelectedImagesInRecycler() {
-
+        LinearRecuclerViewBdyctrlBg.setVisibility(View.GONE);
+        imgHomeBg.setVisibility(View.VISIBLE);
         if (ImagesFromDevice.isEmpty()) {
             // Normally set everything according to XML
             buttonAnimationManager.SelectImageAnimation("unloop_animation");
@@ -268,11 +310,25 @@ public class TextExtractorActivity extends AppCompatActivity {
         downloadAllImagesLottie = findViewById(R.id.lottie_anim_download_in_bottom_toolbar_bgrl);
         selectedImagesRecycler = findViewById(R.id.recycler_id_selected_images_text_extractor);
         generatedTextRecycler = findViewById(R.id.generatedTextRecycler);
+        linearBdy = findViewById(R.id.l_layout_body_in_ext_layout);
+        LinearRecuclerViewBdyctrlBg = findViewById(R.id.linear_lay_ext_lay_home_bdy);
+        imgHomeBg = findViewById(R.id.item_neon_bg_ext_lay);
+        btnCancelProcessing = findViewById(R.id.btn_cancel_processing_rbg_l);
+        selectImagesFromBdy = findViewById(R.id.select_img_from_bdt_txt_ext_lay);
 
         buttonAnimationManager = new ButtonAnimationManager(this);
+        checkConnection = new CheckConnection(this);
+        customToastManager = new CustomToastManager(this);
 
         //Set Initial Thing
         toolbarTitle.setText("Text Extractor");
+        LinearRecuclerViewBdyctrlBg.setVisibility(View.VISIBLE);
+        LinearRecuclerViewBdyctrlBg.setEnabled(true);
+        selectImagesFromBdy.setEnabled(true);
+        imgHomeBg.setVisibility(View.GONE);
+
+        btnCancelProcessing.setVisibility(View.GONE);
+        buttonAnimationManager.ExtractingAnim("stop");
         buttonAnimationManager.SelectImageAnimation("loop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("disable");
         buttonAnimationManager.DownloadAllImagesAnimation("disable");
@@ -293,14 +349,90 @@ public class TextExtractorActivity extends AppCompatActivity {
                 GetImagesFromDevices();
             }
         });
+        selectImagesFromBdy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetImagesFromDevices();
+            }
+        });
 
 
         generateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Uri> S = adapter.getFinalSelectedUris();
-                //SetUpGeneratedTextRecycler();
-                 uploadImagesToBackend(S);
+                finalImageUri = adapter.getFinalSelectedUris();
+
+                if(checkConnection.isInternetConnected()){
+                    startExtractingUiComponents();
+                    uploadImagesToBackend(finalImageUri);
+                    adapter.setUploadingState(true);
+                    adapter.setCardsColorBlur(true);
+                    checkConnection.checkServerConnection(new CheckConnection.ServerConnectionListener() {
+                        @Override
+                        public void onConnectionChecked(boolean isConnected) {
+                            if(isConnected){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(TextExtractorActivity.this, "Just Wait A Little Longer", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter.setUploadingState(false);
+                                        linearBdy.setBackground(null);
+                                        buttonAnimationManager.GeneratingButtonAnimation("enable");
+                                        if (buttonAnimationManager != null) {
+                                            buttonAnimationManager.ExtractingAnim("stop");
+                                        }
+
+                                        btnCancelProcessing.setVisibility(View.GONE);
+                                        imageUploadHelper.cancelUpload();
+                                        CustomNetworkDialog dialog = new CustomNetworkDialog(
+                                                TextExtractorActivity.this, // Context (e.g., Activity)
+                                                R.drawable.server_error_2, // Image resource
+                                                "Server Connection Failed, Please Try Again !" // Dynamic message
+                                        );
+                                        dialog.show();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            adapter.setUploadingState(false);
+                            linearBdy.setBackground(null);
+                            buttonAnimationManager.GeneratingButtonAnimation("enable");
+                            if (buttonAnimationManager != null) {
+                                buttonAnimationManager.ExtractingAnim("stop");
+                            }
+
+                            btnCancelProcessing.setVisibility(View.GONE);
+                            CustomNetworkDialog dialog = new CustomNetworkDialog(
+                                    TextExtractorActivity.this, // Context (e.g., Activity)
+                                    R.drawable.no_internet, // Image resource
+                                    "Please Connect Your Internet ." // Dynamic message
+                            );
+                            dialog.show();
+                        }
+                    });
+                }
+
+            }
+        });
+        btnCancelProcessing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customToastManager.showDownloadSuccessToast(R.drawable.baseline_cancel_24,"Processing Cancelled",3);
+                adapter.setUploadingState(false);
+                disabledExtractingUiComponents();
+                imageUploadHelper.cancelUpload();
             }
         });
 
@@ -352,7 +484,8 @@ public class TextExtractorActivity extends AppCompatActivity {
             // Update UI with the returned text
             generatedTextItemAdapterEXT.updateText(position,editedText);
             Log.d("RE_EXT", "Updated text at position " + position + ": " + editedText);
-            Toast.makeText(this, "Updated Text: " + position +editedText, Toast.LENGTH_SHORT).show();
+            customToastManager.showDownloadSuccessToast(R.drawable.icn_success,"Edit Successful",2);
+
         }
     }
 

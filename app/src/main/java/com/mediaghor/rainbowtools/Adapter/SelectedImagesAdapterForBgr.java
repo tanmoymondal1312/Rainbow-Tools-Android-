@@ -75,7 +75,7 @@ public class SelectedImagesAdapterForBgr extends RecyclerView.Adapter<SelectedIm
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        ImageButton deleteButton;
+        ImageView deleteButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

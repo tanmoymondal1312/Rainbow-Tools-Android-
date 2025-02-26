@@ -3,6 +3,8 @@ package com.mediaghor.rainbowtools.Dialog;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spanned;
@@ -19,6 +21,7 @@ import androidx.core.text.HtmlCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.mediaghor.rainbowtools.R;
 
@@ -33,6 +36,7 @@ public class TextEditorFullScreenDialog extends AppCompatActivity {
     private int keyboardHeight = 0;
     private boolean isKeyboardVisible = false;
     ImageButton btnUndo,btnRedo,btnCloseActivity,btnOkActivity;
+    Uri imgUri;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -62,6 +66,12 @@ public class TextEditorFullScreenDialog extends AppCompatActivity {
         // 1️⃣ Set the default text
         String receivedText = getIntent().getStringExtra("texts");
         int position = getIntent().getIntExtra("position", -1); // Default value -1 if not found
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // API 33+
+            imgUri = getIntent().getParcelableExtra("imgUri", Uri.class);
+        } else {
+            imgUri = getIntent().getParcelableExtra("imgUri");
+        }
+
 
         editor.setHtml(receivedText);
 
@@ -70,7 +80,12 @@ public class TextEditorFullScreenDialog extends AppCompatActivity {
 
 
         // Set Background Image
-        photoView.setImageResource(R.drawable.example_texts_1);
+        if (imgUri != null) {
+            Glide.with(this)
+                    .load(imgUri)
+                    .into(photoView);
+        }
+
 
         // Configure RichEditor
         setupRichEditor();
@@ -109,7 +124,7 @@ public class TextEditorFullScreenDialog extends AppCompatActivity {
                 resultIntent.putExtra("editedText", cleanedText);
                 resultIntent.putExtra("position", position);
                 setResult(RESULT_OK, resultIntent);
-                finish(); // Close the activity
+                finish();
             }
         });
 

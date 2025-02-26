@@ -18,13 +18,14 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true" />
 
-        <ImageButton
+
+        <ImageView
             android:id="@+id/btn_cancel_from_selected_images"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|top"
-            android:src="@drawable/baseline_close_24"
-            android:background="@android:color/transparent"
-            android:contentDescription="Close button" />
+            android:layout_height="@dimen/_20sdp"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_gravity="right"
+            android:src="@drawable/cross_icon"/>
+
+
     </FrameLayout>
 </androidx.cardview.widget.CardView>

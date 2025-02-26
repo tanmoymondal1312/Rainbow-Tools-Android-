@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activities.TextExtractorActivity">
+
+
+
 
 
     <RelativeLayout
@@ -24,11 +28,62 @@
         android:layout_weight="1">
 
 
+
+
+
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/linear_lay_ext_lay_home_bdy"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/white">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/txt_extract_ic"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/select_img_from_bdt_txt_ext_lay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/img_btn_txt_ext_l"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:padding="@dimen/_35sdp"
+                        android:elevation="15dp"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="Select Image"
+                        android:foreground="?attr/selectableItemBackground"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/item_neon_bg_ext_lay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/neon_bg"
+                android:scaleType="fitXY"/>
+
+            <LinearLayout
+                android:id="@+id/l_layout_body_in_ext_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
@@ -41,6 +96,26 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"/>
             </LinearLayout>
+
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/extracting_anim_in_ext_lay"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:lottie_fileName="processing_brand.json"
+                android:layout_gravity="center"/>
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_cancel_processing_rbg_l"
+                android:layout_width="85dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center|bottom"
+                android:layout_marginBottom="@dimen/_40sdp"
+                android:background="@drawable/btn_shape_cancel"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="Cancel" />
         </FrameLayout>
     </RelativeLayout>
 

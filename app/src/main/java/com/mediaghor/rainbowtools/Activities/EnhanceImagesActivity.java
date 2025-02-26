@@ -112,7 +112,6 @@ public class EnhanceImagesActivity extends AppCompatActivity {
         btnCancelProcessing.setVisibility(View.GONE);
         buttonAnimationManager.ButterflyProgressing("disable");
         buttonAnimationManager.GeneratingButtonAnimation("enable");
-        customToastManager.showDownloadSuccessToast(R.drawable.baseline_cancel_24,"Processing Cancelled",3);
 
 
     }
@@ -316,6 +315,7 @@ public class EnhanceImagesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 CancelProcessing();
+                customToastManager.showDownloadSuccessToast(R.drawable.baseline_cancel_24,"Processing Cancelled",3);
             }
         });
 
