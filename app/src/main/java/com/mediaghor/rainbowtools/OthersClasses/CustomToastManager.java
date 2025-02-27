@@ -14,10 +14,10 @@ import com.mediaghor.rainbowtools.R;
 public class CustomToastManager {
 
     private final Activity activity;
-    private TextView toastTitle;
-    private ImageView toastImage;
-    private TextView toastDescription;
-    private View customView;
+    private final View customView;
+    private final TextView toastTitle;
+    private final ImageView toastImage;
+    private Toast currentToast;
 
     // Constructor to initialize the activity reference and custom toast layout
     public CustomToastManager(Context context) {
@@ -26,11 +26,7 @@ public class CustomToastManager {
         } else {
             throw new IllegalArgumentException("Context must be an instance of Activity");
         }
-        initializeCustomToast();
-    }
 
-    // Initialize the custom toast layout and views
-    private void initializeCustomToast() {
         // Inflate the custom layout for the toast
         LayoutInflater inflater = activity.getLayoutInflater();
         customView = inflater.inflate(R.layout.custom_toast, null);
@@ -38,35 +34,21 @@ public class CustomToastManager {
         // Find the views in the custom layout
         toastTitle = customView.findViewById(R.id.title_custom_toast);
         toastImage = customView.findViewById(R.id.img_custom_toast);
-        toastDescription = customView.findViewById(R.id.description_custom_toast);
     }
-    // Method to show a custom toast with the provided image, title, description, and duration
 
-
-    // Example method for a success toast
+    // Show a custom toast with an image and title, ensuring only one instance exists
     public void showDownloadSuccessToast(int imageResId, String title, int duration) {
-        toastDescription.setVisibility(View.GONE);
+        if (currentToast != null) {
+            currentToast.cancel();  // Cancel previous toast before showing a new one
+        }
+
         toastTitle.setText(title);
         toastImage.setImageResource(imageResId);
-        Toast toast = new Toast(activity);
-        toast.setDuration(duration);
-        toast.setView(customView);
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 350);
-        toast.show();
+
+        currentToast = new Toast(activity);
+        currentToast.setDuration(duration);
+        currentToast.setView(customView);
+        currentToast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 350);
+        currentToast.show();
     }
-
-    // Example method for a failure toast
-//    public void showDownloadFailureToast(int imageResId, String title, String description, int duration) {
-//        toastTitle.setText(title);
-//        toastImage.setImageResource(imageResId);
-//        toastDescription.setText(description);
-//
-//        // Create and show the Toast
-//        Toast toast = new Toast(activity);
-//        toast.setDuration(duration);
-//        toast.setView(customView);
-//        toast.show();
-//    }
-
-    // You can add more methods for different toast types if needed, e.g., success, error, info, etc.
 }

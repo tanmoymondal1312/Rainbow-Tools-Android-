@@ -91,31 +91,32 @@ public class TextExtractorActivity extends AppCompatActivity {
         }
     }
 
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private String lastMessage;
+    private final Runnable toastRunnable = () -> customToastManager.showDownloadSuccessToast(R.drawable.download_success, lastMessage, 2);
+
     private final View.OnClickListener commonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String message;
-
             if (v.getId() == R.id.child1_download_as_txt) {
                 generatedTextItemAdapterEXT.DownloadsAll("txt");
-                message = "Downloaded all as txt";
+                lastMessage = "Downloaded all as txt";
             } else if (v.getId() == R.id.child2_download_as_pdf) {
                 generatedTextItemAdapterEXT.DownloadsAll("pdf");
-                message = "Downloaded all as pdf";
+                lastMessage = "Downloaded all as pdf";
             } else if (v.getId() == R.id.child3_download_as_docx) {
                 generatedTextItemAdapterEXT.DownloadsAll("docx");
-                message = "Downloaded all as docx";
+                lastMessage = "Downloaded all as docx";
             } else {
-                message = "Other Child Clicked";
+                lastMessage = "Other Child Clicked";
             }
+
             buttonAnimationManager.DownloadAllImagesAnimation("downloading");
             animateSlideOut(bdyDownloadItems);
 
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                customToastManager.showDownloadSuccessToast(R.drawable.download_success, message, 2);
-            }, 2500);
-
-
+            // Cancel any pending toast tasks before scheduling a new one
+            handler.removeCallbacks(toastRunnable);
+            handler.postDelayed(toastRunnable, 2500);
         }
     };
 
