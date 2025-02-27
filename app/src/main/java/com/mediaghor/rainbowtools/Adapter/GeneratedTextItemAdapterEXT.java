@@ -12,7 +12,6 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,24 +40,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedTextItemAdapterEXT.ViewHolder> {
 
@@ -125,7 +116,7 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
                 String fileName = "Rainbow_Tools_Extracted_Texts_" + timeStamp + ".txt";
                 String content = holder.textView.getText().toString();
-                saveAsTXT(fileName, content, context);
+                saveAsTXT(fileName, content,false, context);
             }
         });
         holder.saveAsPdf.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +125,7 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
                 String fileName = "Rainbow_Tools_Extracted_Texts_" + timeStamp;
                 String content = holder.textView.getText().toString();
-                saveAsPDF(fileName, content, context);
+                saveAsPDF(fileName, content,false, context);
             }
         });
         holder.saveAsDocx.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +134,7 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
                 String fileName = "Rainbow_Tools_Extracted_Texts_" + timeStamp;
                 String content = holder.textView.getText().toString();
-                saveAsDOCX(fileName, content, context);
+                saveAsDOCX(fileName, content,false, context);
             }
         });
 
@@ -318,7 +309,7 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
     }
 
 
-    public void saveAsTXT(String fileName, String content, Context context) {
+    public void saveAsTXT(String fileName, String content, boolean allDownload, Context context) {
         try {
             // Define the directory
             File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Rainbow Tools Documents");
@@ -339,7 +330,9 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
 
             // Scan the file so it appears in storage
             scanFile(context, file);
-            Toast.makeText(context, "Saved as txt", Toast.LENGTH_SHORT).show();
+            if(!allDownload){
+                Toast.makeText(context, "Saved as txt", Toast.LENGTH_SHORT).show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(context, "Failed to save TXT", Toast.LENGTH_SHORT).show();
@@ -347,7 +340,7 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
     }
 
 
-    public void saveAsPDF(String fileName, String content, Context context) {
+    public void saveAsPDF(String fileName, String content, boolean allDownload, Context context) {
         try {
             File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Rainbow Tools Documents");
             if (!dir.exists()) dir.mkdirs();
@@ -365,14 +358,16 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
 
             // Scan the file
             scanFile(context, file);
-            Toast.makeText(context, "Saved as PDF", Toast.LENGTH_SHORT).show();
+            if(!allDownload){
+                Toast.makeText(context, "Saved as PDF", Toast.LENGTH_SHORT).show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(context, "Failed to save PDF", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void saveAsDOCX(String fileName, String content, Context context) {
+    public void saveAsDOCX(String fileName, String content, boolean allDownload, Context context) {
         try {
             File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Rainbow Tools Documents");
             if (!dir.exists()) dir.mkdirs();
@@ -389,12 +384,45 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
 
             // Scan the file
             scanFile(context, file);
-            Toast.makeText(context, "Saved as DOCX", Toast.LENGTH_SHORT).show();
+            if(!allDownload){
+                Toast.makeText(context, "Saved as DOCX", Toast.LENGTH_SHORT).show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(context, "Failed to save DOCX", Toast.LENGTH_SHORT).show();
         }
     }
+    public void DownloadsAll(String as){
+        if(as.equals("pdf")){
+            for (int i = 0; i < texts.size(); i++) {
+                Log.d("ValueOf","Value Of I Is "+i+" Value Of texts "+texts.size());
+                String content = texts.get(i);
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                String fileName = "Rainbow_Tools_Extracted_Texts_" + timeStamp + "_" + i; // Append index to make each file unique
+                saveAsPDF(fileName, content, true, context);
+            }
+        } else if (as.equals("txt")) {
+            for (int i = 0; i < texts.size(); i++) {
+                Log.d("ValueOf","Download As txt Value Of I Is "+i+" Value Of texts "+texts.size());
+                String content = texts.get(i);
+
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                String fileName = "Rainbow_Tools_Extracted_Texts_" + timeStamp +"_"+ i+".txt";
+                saveAsTXT(fileName, content, true, context);
+            }
+
+        } else if (as.equals("docx")) {
+            for (int i = 0; i < texts.size(); i++) {
+                Log.d("ValueOf","Value Of I Is "+i+" Value Of texts "+texts.size());
+                String content = texts.get(i);
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                String fileName = "Rainbow_Tools_Extracted_Texts_" + timeStamp + "_" + i; // Append index to make each file unique
+                saveAsDOCX(fileName, content, true, context);
+            }
+
+        }
+    }
+
 
 
 
@@ -407,6 +435,7 @@ public class GeneratedTextItemAdapterEXT extends RecyclerView.Adapter<GeneratedT
             Log.e("RE_EXT", "Invalid position: " + position);
         }
     }
+
 
 
 

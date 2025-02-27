@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -58,7 +59,7 @@ import java.util.concurrent.Executors;
 public class TextExtractorActivity extends AppCompatActivity {
 
     ImageButton toolbarBackBtn,selectImagesFromBdy;
-    LottieAnimationView lottieAnimationSelectImages,generateButton,downloadAllImagesLottie;
+    LottieAnimationView lottieAnimationSelectImages,generateButton,downloadAllImagesLottie,downloadingAllImagesLottie;
     RecyclerView selectedImagesRecycler,generatedTextRecycler;
     Button btnCancelProcessing;
     ImageView imgHomeBg;
@@ -70,7 +71,7 @@ public class TextExtractorActivity extends AppCompatActivity {
     private ArrayList<Uri> TextsFilesUris = new ArrayList<>();
     public ArrayList<Uri> finalImageUri = new ArrayList<>();
 
-    LinearLayout linearBdy,LinearRecuclerViewBdyctrlBg;
+    LinearLayout linearBdy,LinearRecuclerViewBdyctrlBg,bdyDownloadItems;
     TextView toolbarTitle;
 
     ButtonAnimationManager buttonAnimationManager;
@@ -81,6 +82,67 @@ public class TextExtractorActivity extends AppCompatActivity {
     ImageUploadHelper imageUploadHelper;
     CustomToastManager customToastManager;
 
+
+
+    private void setChildClickListeners(LinearLayout parentLayout) {
+        for (int i = 0; i < parentLayout.getChildCount(); i++) {
+            View child = parentLayout.getChildAt(i);
+            child.setOnClickListener(commonClickListener);
+        }
+    }
+
+    private final View.OnClickListener commonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String message;
+
+            if (v.getId() == R.id.child1_download_as_txt) {
+                generatedTextItemAdapterEXT.DownloadsAll("txt");
+                message = "Downloaded all as txt";
+            } else if (v.getId() == R.id.child2_download_as_pdf) {
+                generatedTextItemAdapterEXT.DownloadsAll("pdf");
+                message = "Downloaded all as pdf";
+            } else if (v.getId() == R.id.child3_download_as_docx) {
+                generatedTextItemAdapterEXT.DownloadsAll("docx");
+                message = "Downloaded all as docx";
+            } else {
+                message = "Other Child Clicked";
+            }
+            buttonAnimationManager.DownloadAllImagesAnimation("downloading");
+            animateSlideOut(bdyDownloadItems);
+
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                customToastManager.showDownloadSuccessToast(R.drawable.download_success, message, 2);
+            }, 2500);
+
+
+        }
+    };
+
+
+
+
+
+    public void animateSlideIn(View view) {
+        view.setVisibility(View.VISIBLE);
+        view.setEnabled(true);
+
+        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int height = view.getMeasuredHeight(); // Get the actual height
+
+        view.setTranslationY(height); // Start from below
+        view.animate().translationY(0).setDuration(300).start(); // Animate upwards
+    }
+
+    public void animateSlideOut(View view) {
+        int height = view.getHeight(); // Get the current height
+
+        view.animate().translationY(height).setDuration(300)
+                .withEndAction(() -> {
+                    view.setVisibility(View.GONE);
+                    view.setEnabled(false);
+                }).start();
+    }
 
 
 
@@ -193,6 +255,7 @@ public class TextExtractorActivity extends AppCompatActivity {
 
     private void SetUpGeneratedTextRecycler(){
         SetUpImagesLinearly();
+        buttonAnimationManager.DownloadAllImagesAnimation("download");
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         generatedTextRecycler.setLayoutManager(linearLayoutManager);
@@ -217,6 +280,7 @@ public class TextExtractorActivity extends AppCompatActivity {
 
     }
     private void SetSelectedImagesInRecycler() {
+        bdyDownloadItems.setVisibility(View.GONE);
         LinearRecuclerViewBdyctrlBg.setVisibility(View.GONE);
         imgHomeBg.setVisibility(View.VISIBLE);
         if (ImagesFromDevice.isEmpty()) {
@@ -308,6 +372,7 @@ public class TextExtractorActivity extends AppCompatActivity {
         lottieAnimationSelectImages = findViewById(R.id.animation_select_image_id_abgr);
         generateButton = findViewById(R.id.generating_animation_id_bg_remover_layout);
         downloadAllImagesLottie = findViewById(R.id.lottie_anim_download_in_bottom_toolbar_bgrl);
+        downloadingAllImagesLottie = findViewById(R.id.lottie_anim_downloading_in_bottom_toolbar_bgrl);
         selectedImagesRecycler = findViewById(R.id.recycler_id_selected_images_text_extractor);
         generatedTextRecycler = findViewById(R.id.generatedTextRecycler);
         linearBdy = findViewById(R.id.l_layout_body_in_ext_layout);
@@ -315,6 +380,7 @@ public class TextExtractorActivity extends AppCompatActivity {
         imgHomeBg = findViewById(R.id.item_neon_bg_ext_lay);
         btnCancelProcessing = findViewById(R.id.btn_cancel_processing_rbg_l);
         selectImagesFromBdy = findViewById(R.id.select_img_from_bdt_txt_ext_lay);
+        bdyDownloadItems = findViewById(R.id.download_txt_item_btn_ext_rec_item);
 
         buttonAnimationManager = new ButtonAnimationManager(this);
         checkConnection = new CheckConnection(this);
@@ -322,6 +388,7 @@ public class TextExtractorActivity extends AppCompatActivity {
 
         //Set Initial Thing
         toolbarTitle.setText("Text Extractor");
+        bdyDownloadItems.setVisibility(View.GONE);
         LinearRecuclerViewBdyctrlBg.setVisibility(View.VISIBLE);
         LinearRecuclerViewBdyctrlBg.setEnabled(true);
         selectImagesFromBdy.setEnabled(true);
@@ -355,12 +422,49 @@ public class TextExtractorActivity extends AppCompatActivity {
                 GetImagesFromDevices();
             }
         });
+        downloadAllImagesLottie.setOnClickListener(new View.OnClickListener() {
+            boolean isVisible = false; // Track visibility state
+
+            @Override
+            public void onClick(View v) {
+                if (isVisible) {
+                    // Animate from visible to gone (top to bottom)
+                    animateSlideOut(bdyDownloadItems);
+                } else {
+                    // Animate from gone to visible (bottom to top)
+                    bdyDownloadItems.post(() -> animateSlideIn(bdyDownloadItems));
+                    setChildClickListeners(bdyDownloadItems);
+
+                }
+                isVisible = !isVisible; // Toggle state
+            }
+        });
+        downloadingAllImagesLottie.setOnClickListener(new View.OnClickListener() {
+            boolean isVisible = false;
+            @Override
+            public void onClick(View v) {
+                if (isVisible) {
+                    // Animate from visible to gone (top to bottom)
+                    animateSlideOut(bdyDownloadItems);
+                } else {
+                    // Animate from gone to visible (bottom to top)
+                    bdyDownloadItems.post(() -> animateSlideIn(bdyDownloadItems));
+                    setChildClickListeners(bdyDownloadItems);
+
+                }
+                isVisible = !isVisible; // Toggle state
+            }
+        });
+
+
+
 
 
         generateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finalImageUri = adapter.getFinalSelectedUris();
+                bdyDownloadItems.setVisibility(View.GONE);
 
                 if(checkConnection.isInternetConnected()){
                     startExtractingUiComponents();

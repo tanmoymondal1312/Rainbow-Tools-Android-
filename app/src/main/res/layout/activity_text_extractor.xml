@@ -116,11 +116,121 @@
                 android:clickable="true"
                 android:gravity="center"
                 android:text="Cancel" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_150sdp"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:id="@+id/download_txt_item_btn_ext_rec_item"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:paddingLeft="@dimen/_10sdp">
+
+                    <LinearLayout
+                        android:id="@+id/child1_download_as_txt"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/clickble_bg_1"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:gravity="end|center"
+                        android:padding="@dimen/_10sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=".txt"
+                            android:textSize="18sp"
+                            android:textColor="@color/black"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:paddingRight="@dimen/_5sdp"/>
+
+                        <ImageView
+                            android:adjustViewBounds="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ext_txt" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/child2_download_as_pdf"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/clickble_bg_1"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:gravity="end|center"
+                        android:padding="@dimen/_10sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=".pdf"
+                            android:textSize="18sp"
+                            android:textColor="@color/black"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:paddingRight="@dimen/_5sdp"/>
+
+                        <ImageView
+                            android:adjustViewBounds="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ext_pdf" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/child3_download_as_docx"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/clickble_bg_1"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:gravity="end|center"
+                        android:padding="@dimen/_10sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=".docx"
+                            android:textSize="18sp"
+                            android:textColor="@color/black"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:paddingRight="@dimen/_2sdp"/>
+
+                        <ImageView
+                            android:adjustViewBounds="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ext_docx" />
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2">
+                </LinearLayout>
+            </LinearLayout>
         </FrameLayout>
     </RelativeLayout>
-
-
-
     <RelativeLayout
         android:gravity="bottom"
         android:layout_width="match_parent"
