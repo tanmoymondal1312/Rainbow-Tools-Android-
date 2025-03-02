@@ -56,7 +56,6 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
                 .placeholder(R.drawable.emtyimgbgrmv) // Optional placeholder
                 .error(R.drawable.placeholder_image)            // Optional error image
                 .into(holder.imageView);
-        Log.d("VideoPlayback", "Received URI for video at position " + position + ": " + imageUri);
 
 
 
@@ -68,9 +67,10 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
                 intent = new Intent(context, EnhanceImagesActivity.class);
             } else if (currentItem.getText().equals("Text Extractor From Images")) {
                 intent = new Intent(context, TextExtractorActivity.class);
+            }else if (currentItem.getText().equals("Image Size Reducer")) {
+                intent = new Intent(context, TextExtractorActivity.class);
 
             }
-
             // Start the activity if an intent is created
             if (intent != null) {
                 context.startActivity(intent);

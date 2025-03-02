@@ -50,8 +50,8 @@ public class FragmentImagesOptimazation extends Fragment {
                 "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.txt_extraxt
         ));
         cardItemsList.add(new CardItemsModel(
-                "Background Remover",
-                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.bg_remover
+                "Image Size Reducer",
+                "android.resource://" + requireContext().getPackageName() + "/" + R.drawable.card_img_size_reducer_
         ));
 
         // Setting adapter
