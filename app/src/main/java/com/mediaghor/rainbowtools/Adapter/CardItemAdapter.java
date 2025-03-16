@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.mediaghor.rainbowtools.Activities.BackgroundRemoverActivity;
 import com.mediaghor.rainbowtools.Activities.EnhanceImagesActivity;
+import com.mediaghor.rainbowtools.Activities.ImageSizeReducer;
 import com.mediaghor.rainbowtools.Activities.TextExtractorActivity;
 import com.mediaghor.rainbowtools.Models.CardItemsModel;
 import com.mediaghor.rainbowtools.R;
@@ -68,7 +69,7 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
             } else if (currentItem.getText().equals("Text Extractor From Images")) {
                 intent = new Intent(context, TextExtractorActivity.class);
             }else if (currentItem.getText().equals("Image Size Reducer")) {
-                intent = new Intent(context, TextExtractorActivity.class);
+                intent = new Intent(context, ImageSizeReducer.class);
 
             }
             // Start the activity if an intent is created

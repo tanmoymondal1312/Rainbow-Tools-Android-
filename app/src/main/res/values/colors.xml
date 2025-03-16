@@ -14,6 +14,7 @@
     <color name ="checkbox_checked_color">#C400FF</color>
     <color name="transparent_gray">#80808080</color>
     <color name="gradient_text">#FF4081</color> <!-- Pinkish Notification Color -->
+    <color name="hard_red">#8B0000</color>
 
 
 

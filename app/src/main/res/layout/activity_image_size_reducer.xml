@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Activities.ImageSizeReducer">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include
+            android:id="@+id/layout_toolbar_included"
+            layout="@layout/toolbar_bg_remover" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+            <LinearLayout
+                android:id="@+id/linear_home_rszimg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+                   <ImageView
+                       android:layout_width="match_parent"
+                       android:layout_height="0dp"
+                       android:layout_weight="5"
+                       android:src="@drawable/img_size_reduce_1"
+                       android:adjustViewBounds="true"
+                       android:scaleType="fitCenter"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="9 MB "
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/checkbox_checked_color"
+                            android:fontFamily="sans-serif-medium"
+                            android:padding="12dp"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:shadowColor="#88000000"
+                            android:shadowDx="2"
+                            android:shadowDy="2"
+                            android:shadowRadius="4"
+                            android:background="@drawable/text_bg_1"/>
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:rotation="270"
+                            android:src="@drawable/down_arrow_yl"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="200 KB "
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/teal_700"
+                            android:fontFamily="sans-serif-medium"
+                            android:padding="12dp"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:shadowColor="#88000000"
+                            android:shadowDx="2"
+                            android:shadowDy="2"
+                            android:shadowRadius="4"
+                            android:background="@drawable/text_bg_2" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_gravity="center">
+                        <TextView
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reduce Image Size In One Click 😉"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:textColor="@color/green"
+                            android:fontFamily="sans-serif-black"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:shadowColor="#88000000"
+                            android:shadowDx="2"
+                            android:shadowDy="2"
+                            android:shadowRadius="4"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/select_img_btn_in_bdy_enhance_img_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/select_img_icn"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:padding="0dp"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="Select Image"
+                        android:foreground="?attr/selectableItemBackground"/>
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/neon_bg_2_reduce_img_lay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/neon_bg_2"/>
+
+
+            <LinearLayout
+                android:id="@+id/linear_content_rszimg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_id_reduce_img_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/recycler_reduce_img_size_item_layout"/>
+
+            </LinearLayout>
+
+
+
+
+
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include
+            android:id="@+id/layout_toolbar_bottom_included"
+            layout="@layout/toolbar_botom_bg_remover_activity" />
+    </RelativeLayout>
+
+
+
+</LinearLayout>

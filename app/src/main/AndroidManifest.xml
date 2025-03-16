@@ -21,10 +21,14 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
+            android:name=".Activities.ImageSizeReducer"
+            android:exported="false"
+            android:theme="@style/Theme.RainbowTools"/>
+        <activity
             android:name=".Dialog.TextEditorFullScreenDialog"
-            android:theme="@style/FullScreenDialogTheme"
+            android:exported="false"
             android:launchMode="singleTop"
-            android:exported="false" />
+            android:theme="@style/FullScreenDialogTheme" />
         <activity
             android:name=".Activities.TextExtractorActivity"
             android:exported="false"

@@ -40,7 +40,6 @@ public class ImageUploadHelper {
         this.division = division;
         this.serverIp = context.getResources().getString(R.string.serverIp);
     }
-
     // Method to upload images
     public void uploadImages(List<Uri> uris, final ImageUploadCallback callback) {
         // Prepare the list of MultipartBody.Part for each image
@@ -56,50 +55,79 @@ public class ImageUploadHelper {
         Api service = RetrofitClient.getRetrofitInstance(context).create(Api.class);
         if (division == 1){
             currentUploadCall = service.uploadImages(parts); // Store the call reference
-        } else if (division == 2) {
-            currentUploadCall = service.uploadImagesForEnhanceImages(parts); // Store the call reference
-        } else if (division == 3) {
-            currentUploadCall = service.uploadImagesForTextExtract(parts); // Store the call reference
-        }
-
-
-        // Make the network call
-        currentUploadCall.enqueue(new Callback<ImageUploadResponse>() {
-            @Override
-            public void onResponse(Call<ImageUploadResponse> call, Response<ImageUploadResponse> response) {
-                if (response.isSuccessful()) {
-                    // On success, get the image URLs from the response
-                    Log.d("TXT","Response Accepted");
-                    ArrayList<String> imageNames = (ArrayList<String>) response.body().getImageNames();
-                    ArrayList<Uri> imageUrls = new ArrayList<>();
-                    Log.d("TXT",imageNames.toString());
-
-                    if(division == 1){
+            currentUploadCall.enqueue(new Callback<ImageUploadResponse>() {
+                @Override
+                public void onResponse(Call<ImageUploadResponse> call, Response<ImageUploadResponse> response) {
+                    if (response.isSuccessful()) {
+                        ArrayList<String> imageNames = (ArrayList<String>) response.body().getImageNames();
+                        ArrayList<Uri> imageUrls = new ArrayList<>();
                         for (String imageName : imageNames) {
                             imageUrls.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_bg_removed_images/" + imageName));  // Assuming media URL pattern
                         }
-                    } else if (division == 2) {
+                        callback.onImageUploadSuccess(imageUrls);
+                    } else {
+                        // Handle failure
+                        callback.onImageUploadFailure("Failed to upload images");
+                    }
+                }
+                @Override
+                public void onFailure(Call<ImageUploadResponse> call, Throwable t) {
+                    callback.onImageUploadFailure("Network error: " + t.getMessage());
+                }
+            });
+
+        } else if (division == 2) {
+            currentUploadCall = service.uploadImagesForEnhanceImages(parts);
+            currentUploadCall.enqueue(new Callback<ImageUploadResponse>() {
+                @Override
+                public void onResponse(Call<ImageUploadResponse> call, Response<ImageUploadResponse> response) {
+                    if (response.isSuccessful()) {
+                        ArrayList<String> imageNames = (ArrayList<String>) response.body().getImageNames();
+                        ArrayList<Uri> imageUrls = new ArrayList<>();
                         for (String imageName : imageNames) {
                             imageUrls.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_enhance_images/" + imageName));  // Assuming media URL pattern
                         }
-                    } else if (division == 3) {
+                        callback.onImageUploadSuccess(imageUrls);
+                    } else {
+                        callback.onImageUploadFailure("Failed to upload images");
+                    }
+                }
+                @Override
+                public void onFailure(Call<ImageUploadResponse> call, Throwable t) {
+                    // Handle network failure
+                    callback.onImageUploadFailure("Network error: " + t.getMessage());
+                }
+            });
+
+        } else if (division == 3) {
+            currentUploadCall = service.uploadImagesForTextExtract(parts);
+            currentUploadCall.enqueue(new Callback<ImageUploadResponse>() {
+                @Override
+                public void onResponse(Call<ImageUploadResponse> call, Response<ImageUploadResponse> response) {
+                    if (response.isSuccessful()) {
+                        ArrayList<String> imageNames = (ArrayList<String>) response.body().getImageNames();
+                        ArrayList<Uri> imageUrls = new ArrayList<>();
+
                         for (String imageName : imageNames) {
                             imageUrls.add(Uri.parse("http://"+serverIp+":8000/image-optimization/get_extracted_texts/" + imageName));  // Assuming media URL pattern
                         }
-                    }
-                    callback.onImageUploadSuccess(imageUrls);
-                } else {
-                    // Handle failure
-                    callback.onImageUploadFailure("Failed to upload images");
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ImageUploadResponse> call, Throwable t) {
-                // Handle network failure
-                callback.onImageUploadFailure("Network error: " + t.getMessage());
-            }
-        });
+                        callback.onImageUploadSuccess(imageUrls);
+                    } else {
+                        // Handle failure
+                        callback.onImageUploadFailure("Failed to upload images");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ImageUploadResponse> call, Throwable t) {
+                    // Handle network failure
+                    callback.onImageUploadFailure("Network error: " + t.getMessage());
+                }
+            });
+
+        }
+
     }
 
     // Method to cancel the ongoing upload
@@ -148,4 +176,5 @@ public class ImageUploadHelper {
         void onImageUploadSuccess(ArrayList<Uri> imageUrls);
         void onImageUploadFailure(String errorMessage);
     }
+
 }

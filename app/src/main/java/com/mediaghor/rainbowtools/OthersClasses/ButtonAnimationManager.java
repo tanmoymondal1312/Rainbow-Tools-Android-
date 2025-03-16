@@ -337,6 +337,31 @@ public class ButtonAnimationManager {
         }
     }
 
+    public void ManageNeonBgImgReducer(String state){
+        if (context instanceof Activity) {
+            ImageView imageView = activity.findViewById(R.id.neon_bg_2_reduce_img_lay);
+            LinearLayout linearLayout = activity.findViewById(R.id.linear_home_rszimg);
+            ImageButton imageButton =activity.findViewById(R.id.select_img_btn_in_bdy_enhance_img_layout);
+            switch (state){
+                case"enable":
+                    linearLayout.setVisibility(View.GONE);
+                    imageView.setVisibility(View.VISIBLE);
+                    break;
+                case"disable":
+                    imageView.setVisibility(View.GONE);
+
+                    linearLayout.setVisibility(View.VISIBLE);
+                    linearLayout.setEnabled(true);
+                    linearLayout.setClickable(true);
+                    imageButton.setVisibility(View.VISIBLE);
+                    imageButton.setEnabled(true);
+                    imageButton.setClickable(true);
+
+
+            }
+        }
+    }
+
 
 
 
