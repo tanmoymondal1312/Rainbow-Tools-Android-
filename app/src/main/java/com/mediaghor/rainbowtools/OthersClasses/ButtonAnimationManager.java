@@ -1,5 +1,4 @@
 package com.mediaghor.rainbowtools.OthersClasses;
-
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -7,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Shader;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.view.menu.MenuView;
+import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.mediaghor.rainbowtools.R;
@@ -337,28 +338,30 @@ public class ButtonAnimationManager {
         }
     }
 
-    public void ManageNeonBgImgReducer(String state){
+    public void ImageReducerGeneratingAnimation(String state){
         if (context instanceof Activity) {
-            ImageView imageView = activity.findViewById(R.id.neon_bg_2_reduce_img_lay);
-            LinearLayout linearLayout = activity.findViewById(R.id.linear_home_rszimg);
-            ImageButton imageButton =activity.findViewById(R.id.select_img_btn_in_bdy_enhance_img_layout);
+            LinearLayout generetingReducingAnimLay,LinearRecycleContained;
+            generetingReducingAnimLay = activity.findViewById(R.id.reducing_img_size_in_r_img_lay);
+            LinearRecycleContained = activity.findViewById(R.id.linear_content_rszimg);
+
             switch (state){
-                case"enable":
-                    linearLayout.setVisibility(View.GONE);
-                    imageView.setVisibility(View.VISIBLE);
+                case "start":
+                    generetingReducingAnimLay.setVisibility(View.VISIBLE);
+                    LinearRecycleContained.setForeground(new ColorDrawable(ContextCompat.getColor(context, R.color.transparent_gray)));
+
+
                     break;
-                case"disable":
-                    imageView.setVisibility(View.GONE);
+                case "stop":
+                    generetingReducingAnimLay.setVisibility(View.GONE);
+                    LinearRecycleContained.setForeground(null);
+                    break;
 
-                    linearLayout.setVisibility(View.VISIBLE);
-                    linearLayout.setEnabled(true);
-                    linearLayout.setClickable(true);
-                    imageButton.setVisibility(View.VISIBLE);
-                    imageButton.setEnabled(true);
-                    imageButton.setClickable(true);
-
-
+                default:
+                    throw new IllegalArgumentException("Invalid state: " + state);
             }
+        }
+        else {
+            Log.e("GeneratingButtonAnimation", "Context is not an instance of Activity!");
         }
     }
 

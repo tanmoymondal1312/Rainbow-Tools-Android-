@@ -6,38 +6,60 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.mediaghor.rainbowtools.OthersClasses.ButtonAnimationManager;
 import com.mediaghor.rainbowtools.OthersClasses.CustomToastManager;
 import com.mediaghor.rainbowtools.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Random;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ImageSizeReducerAdapter extends RecyclerView.Adapter<ImageSizeReducerAdapter.ViewHolder>{
 
     private final ArrayList<Uri> selectedUris;
     private ArrayList<String> Sizes = new ArrayList<>();
+    private ArrayList<Uri> serverUrl = new ArrayList<>();
+
 
     private final Context context;
     ButtonAnimationManager buttonAnimationManager;
@@ -75,60 +97,131 @@ public class ImageSizeReducerAdapter extends RecyclerView.Adapter<ImageSizeReduc
 
     @Override
     public void onBindViewHolder(@NonNull ImageSizeReducerAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        Uri uri = selectedUris.get(position);
+
+
+        holder.loadingImagesLottie.setVisibility(View.GONE); // Hide progress when loaded
+        holder.disabledTxtLine.setVisibility(View.GONE);
+        holder.newSize.setVisibility(View.GONE);
+        holder.downloadBtn.setVisibility(View.GONE);
+
+
         // Load the image using Glide for efficiency
-        Glide.with(context)
-                .load(uri)
-                .placeholder(R.drawable.placeholder_image) // Optional: Set a placeholder image
-                .into(holder.imageView);
-        // Get recommended image size and set it in EditText
-        new Thread(() -> {
-            int recommendedSize = getRecommendedSize(uri);
-            String actualImageSize = "Size " + getImageSizeFormatted(uri);
-            String actualWidth = "Width:"+getImageWidth(uri)+" PX";
-            String actualHeight = "Height:"+getImageHeight(uri)+" PX";
-            ((Activity) context).runOnUiThread(() -> {
-                holder.isProgrammitically = true;
-                holder.SizeInKb.setText(String.valueOf(recommendedSize));
-                holder.isProgrammitically = false;
-                holder.actualImgSize.setText(actualImageSize);
-                holder.actualWidth.setText(actualWidth);
-                holder.actualHeight.setText(actualHeight);
-            });
-        }).start();
-        holder.SizeInKb.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().isEmpty()) {
-                    try {
-                        int newSize = Integer.parseInt(s.toString().replaceFirst("^0+(?!$)", ""));
-                        Sizes.set(position, String.valueOf(newSize)); // Update Sizes list
-                        if(holder.isProgrammitically){
-                            return;
-                        }
-                        holder.RecommendTxt.setText("User Define");
-                        holder.RecommendTxt.setTextColor(ContextCompat.getColor(context, R.color.black));
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace(); // Handle invalid input gracefully
-                    }
-                }else {
-                    Sizes.set(position, "0");
-                    holder.RecommendTxt.setText("Size Required");
-                    holder.RecommendTxt.setTextColor(ContextCompat.getColor(context, R.color.hard_red));
-                }
+        try {
+            // Ensure position is valid
+            if (position < 0 || position >= selectedUris.size()) {
+                Log.e("Adapter", "Invalid position: " + position + ", selectedUris size: " + selectedUris.size());
+                return;
             }
-        });
+
+            Uri uri = selectedUris.get(position);
+            Log.d("Adapter", "Loading image from URI: " + uri.toString());
+            if (serverUrl == null || serverUrl.isEmpty() || position >= serverUrl.size()) {
+                // Load local image
+                Glide.with(context)
+                        .load(uri)
+                        .placeholder(R.drawable.placeholder_image) // Optional: Set a placeholder image
+                        .into(holder.imageView);
+                new Thread(() -> {
+                    int recommendedSize = getRecommendedSize(uri);
+                    String actualImageSize = "Size " + getImageSizeFormatted(uri);
+                    String actualWidth = "Width:"+getImageWidth(uri)+" PX";
+                    String actualHeight = "Height:"+getImageHeight(uri)+" PX";
+                    ((Activity) context).runOnUiThread(() -> {
+                        holder.isProgrammitically = true;
+                        holder.SizeInKb.setText(String.valueOf(recommendedSize));
+                        holder.isProgrammitically = false;
+                        holder.actualImgSize.setText(actualImageSize);
+                        holder.actualWidth.setText(actualWidth);
+                        holder.actualHeight.setText(actualHeight);
+                    });
+                }).start();
+                holder.SizeInKb.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (!s.toString().isEmpty()) {
+                            try {
+                                int newSize = Integer.parseInt(s.toString().replaceFirst("^0+(?!$)", ""));
+                                Sizes.set(position, String.valueOf(newSize)); // Update Sizes list
+                                if(holder.isProgrammitically){
+                                    return;
+                                }
+                                holder.RecommendTxt.setText("User Define");
+                                holder.RecommendTxt.setTextColor(ContextCompat.getColor(context, R.color.black));
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace(); // Handle invalid input gracefully
+                            }
+                        }else {
+                            Sizes.set(position, "0");
+                            holder.RecommendTxt.setText("Size Required");
+                            holder.RecommendTxt.setTextColor(ContextCompat.getColor(context, R.color.hard_red));
+                        }
+                    }
+                });
 
 
 
-        // Set click listener for the delete button
-//        if(isUploading){
-//            holder.deleteButton.setVisibility(View.GONE);
-//        }
+
+
+            } else {
+                // Load from server with progress
+                holder.loadingImagesLottie.setVisibility(View.VISIBLE);
+                Log.d("Adapter", "Loading image from server URL: " + serverUrl.get(position));
+
+                Glide.with(context)
+                        .load(serverUrl.get(position))
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                holder.loadingImagesLottie.setVisibility(View.GONE); // Hide progress if failed
+                                Log.e("Glide", "Image load failed for position: " + position, e);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                holder.loadingImagesLottie.setVisibility(View.GONE); // Hide progress when loaded
+
+                                new Thread(() -> {
+                                    long size = getFileSizeFromUrl(String.valueOf(serverUrl.get(position)));
+                                    ((Activity) context).runOnUiThread(() -> {
+                                        holder.imgData.setBackgroundColor(ContextCompat.getColor(context,R.color.green));
+                                        holder.RecommendTxt.setTextColor(ContextCompat.getColor(context, R.color.black));
+                                        holder.disabledTxtLine.setVisibility(View.VISIBLE);
+                                        holder.newSize.setVisibility(View.VISIBLE);
+                                        holder.newSize.setText("Size: " + size + " KB");
+                                        holder.deleteBtn.setVisibility(View.GONE);
+                                        holder.downloadBtn.setVisibility(View.VISIBLE);
+                                        holder.downloadBtn.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                downloadLoadedImage(serverUrl.get(position));
+                                                customToastManager.showDownloadSuccessToast(R.drawable.download_success,"Download Successful",3);
+                                            }
+                                        });
+                                    });
+                                }).start();
+
+                                Log.d("Glide", "Image successfully loaded for position: " + position);
+                                return false;
+                            }
+                        })
+                        .into(holder.imageView);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            Log.e("Adapter", "IndexOutOfBoundsException at position: " + position, e);
+        } catch (Exception e) {
+            Log.e("Adapter", "Unexpected error in onBindViewHolder at position: " + position, e);
+        }
+
+        if(isUploading){
+            holder.deleteBtn.setVisibility(View.GONE);
+        }else {
+            holder.deleteBtn.setVisibility(View.VISIBLE);
+        }
         holder.deleteBtn.setOnClickListener(v -> {
             selectedUris.remove(position);
             if(selectedUris.size() == 0){
@@ -141,6 +234,7 @@ public class ImageSizeReducerAdapter extends RecyclerView.Adapter<ImageSizeReduc
         });
 
 
+
     }
 
     @Override
@@ -150,10 +244,12 @@ public class ImageSizeReducerAdapter extends RecyclerView.Adapter<ImageSizeReduc
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
           ImageView imageView;
-          LottieAnimationView deleteBtn;
+          LottieAnimationView deleteBtn,downloadBtn,loadingImagesLottie;
           EditText SizeInKb;
-          TextView actualImgSize,actualWidth,actualHeight,RecommendTxt;
+          TextView actualImgSize,actualWidth,actualHeight,RecommendTxt,newSize;
+          View disabledTxtLine;
           boolean isProgrammitically = false;
+          LinearLayout imgData;
 
 
 
@@ -161,14 +257,25 @@ public class ImageSizeReducerAdapter extends RecyclerView.Adapter<ImageSizeReduc
             super(itemView);
             imageView = itemView.findViewById(R.id.img_id_recycler_before_enhance);
             deleteBtn = itemView.findViewById(R.id.remove_item_from_recy_enhance_img_itm);
+            downloadBtn = itemView.findViewById(R.id.download_item_from_recy_enhance_img_itm);
+
             SizeInKb = itemView.findViewById(R.id.size_in_kb_input_box);
 
             actualImgSize = itemView.findViewById(R.id.r_img_size_actual_size_of_img);
             actualWidth = itemView.findViewById(R.id.orginal_width_r_img_size);
             actualHeight = itemView.findViewById(R.id.orginal_height_r_img_size);
             RecommendTxt = itemView.findViewById(R.id.recomended_txt_itm_v_i_reducer);
+            loadingImagesLottie = itemView.findViewById(R.id.lottie_progressing_loading_img_rec_red_img);
+            newSize = itemView.findViewById(R.id.r_img_size_actual_new_size_of_img);
+            disabledTxtLine = itemView.findViewById(R.id.view_disabled_txt_rec_redu_img);
+            imgData = itemView.findViewById(R.id.img_data_r_red_img);
 
         }
+    }
+
+    public void setServerUrl(ArrayList<Uri>serverUrl){
+        this.serverUrl = serverUrl;
+        notifyDataSetChanged();
     }
 
     public void setUploadingStates(boolean uploading) {
@@ -264,6 +371,23 @@ public class ImageSizeReducerAdapter extends RecyclerView.Adapter<ImageSizeReduc
         }
         return 0;
     }
+    private long getFileSizeFromUrl(String url) {
+        try {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .head() // Send HEAD request to get metadata only (faster)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                return Long.parseLong(response.header("Content-Length", "0")) / 1024; // Convert to KB
+            }
+        } catch (Exception e) {
+            Log.e("FileSize", "Error getting file size from URL: " + url, e);
+        }
+        return 0; // Return 0 if error
+    }
 
     // Helper method to return a random percentage between 5.35% and 5.40%
     private double getRandomPercentage(double min, double max) {
@@ -338,6 +462,97 @@ public class ImageSizeReducerAdapter extends RecyclerView.Adapter<ImageSizeReduc
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+
+
+
+
+
+
+    /**
+     * Download a loaded image directly
+     *
+     * @param imageUrl The URL of the image to download
+     */
+    private void downloadLoadedImage(Uri imageUrl) {
+        Glide.with(context)
+                .asFile()
+                .load(imageUrl)
+                .into(new CustomTarget<File>() {
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                        saveFileToDownloads(resource);
+                        Log.d("Download", "File downloaded successfully from URL: " + imageUrl.toString());
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        Log.d("Download", "Download target cleared.");
+                    }
+                });
+    }
+
+    /**
+     * Save a cached file to the Downloads directory
+     *
+     * @param sourceFile The file retrieved from Glide's cache
+     */
+    private void saveFileToDownloads(File sourceFile) {
+        try {
+            // Get the Downloads directory
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            // Create a destination file with a unique name
+            File destFile = new File(downloadsDir, "Rainbow_image_" + System.currentTimeMillis() + ".png");
+
+            // Copy the file from the cache to the Downloads directory
+            try (InputStream inputStream = new FileInputStream(sourceFile);
+                 OutputStream outputStream = new FileOutputStream(destFile)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+            }
+            // Notify the media scanner to index the new file
+            scanFileForGallery(destFile);
+            // Log the file's location for debugging
+            Log.d("Download", "File saved to " + destFile.getAbsolutePath());
+        } catch (IOException e) {
+            // Handle any errors during the file save process
+            Log.e("Download", "Failed to save file", e);
+        }
+    }
+    /**
+     * Scan The File And Notify To Media
+     *
+     * @param file The file retrieved from Glide's cache
+     */
+    private void scanFileForGallery(File file) {
+        MediaScannerConnection.scanFile(context, new String[]{file.getAbsolutePath()}, null,
+                (path, uri) -> Log.d("MediaScanner", "Scanned " + path + " -> URI: " + uri));
+    }
+
+    /**
+     * Download All Enhance Images To Device
+     */
+    public void DownloadAllImages() {
+        buttonAnimationManager.DownloadAllImagesAnimation("downloading");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Code to execute after 5 seconds
+                // For example, you can show a Toast or update the UI
+                customToastManager.showDownloadSuccessToast(R.drawable.download_success,"All Images Downloaded Successful",3);
+            }
+        }, 5000); // 5000 milliseconds = 5 seconds
+
+        for (Uri imageUrl : serverUrl) {
+            // Download from the cached file
+
+            // Download from Glide
+            downloadLoadedImage(imageUrl);
         }
     }
 

@@ -151,17 +151,67 @@
                 android:id="@+id/linear_content_rszimg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:foreground="@color/transparent_gray">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_id_reduce_img_size"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:listitem="@layout/recycler_reduce_img_size_item_layout"/>
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/reducing_img_size_in_r_img_lay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
 
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    app:lottie_fileName="processing_brand.json"
+                    android:layout_gravity="center"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true"
+                    android:adjustViewBounds="true"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="10dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reducing "
+                        android:textSize="20sp"
+                        android:textColor="#F8E011"
+                        android:fontFamily="sans-serif-medium"/>
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:lottie_fileName="3_dots_rounding.json"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_cancel_processing_rbg_l"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="Cancel"
+                android:background="@drawable/btn_shape_cancel"
+                android:layout_gravity="center|bottom"
+                android:layout_marginBottom="@dimen/_30sdp"/>
 
 
 

@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,6 +39,7 @@ import com.mediaghor.rainbowtools.Helpers.ImageSizeUploadHelper;
 import com.mediaghor.rainbowtools.Helpers.ImageUploadHelper;
 import com.mediaghor.rainbowtools.Models.ReduceImageUploadResponse;
 import com.mediaghor.rainbowtools.OthersClasses.ButtonAnimationManager;
+import com.mediaghor.rainbowtools.OthersClasses.CustomNetworkDialog;
 import com.mediaghor.rainbowtools.OthersClasses.CustomToastManager;
 import com.mediaghor.rainbowtools.R;
 
@@ -53,16 +55,18 @@ public class ImageSizeReducer extends AppCompatActivity {
     RecyclerView RV_SelectedImages;
     LinearLayout homeLinearBdy;
     ImageView homeImgBdy;
-
+    Button btnCancelProcessing;
 
     ImageSizeReducerAdapter adapter;
-
-
-
     ButtonAnimationManager buttonAnimationManager;
     private ActivityResultLauncher<Intent> selectImagesLauncher;
     private CheckConnection checkConnection;
     CustomToastManager customToastManager;
+    ImageSizeUploadHelper imageSizeUploadHelper;
+
+
+
+
 
 
     private void UploadImageInServer(ArrayList<Uri> uris, ArrayList<String> sizes) {
@@ -70,21 +74,25 @@ public class ImageSizeReducer extends AppCompatActivity {
         Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
         executorService.execute(() -> {
-            ImageSizeUploadHelper imageSizeUploadHelper = new ImageSizeUploadHelper(this, new ImageSizeUploadHelper.ImageUploadCallback() {
+            imageSizeUploadHelper = new ImageSizeUploadHelper(this, new ImageSizeUploadHelper.ImageUploadCallback() {
                 @Override
                 public void onSuccess(ArrayList<String>imageNames,ArrayList<Uri> imageUrls) {
                     mainThreadHandler.post(() -> {
-                        Toast.makeText(ImageSizeReducer.this, "Upload Successful!", Toast.LENGTH_SHORT).show();
-                        Log.d("Response_1",imageNames.toString());
-                        Log.d("Response_1",imageUrls.toString());
+                        btnCancelProcessing.setVisibility(View.GONE);
+                        buttonAnimationManager.ImageReducerGeneratingAnimation("stop");
+                        adapter.setServerUrl(imageUrls);
+                        buttonAnimationManager.GeneratingButtonAnimation("enable");
+                        buttonAnimationManager.DownloadAllImagesAnimation("download");
+                        customToastManager.showDownloadSuccessToast(R.drawable.icn_success,"Reduce Successful",4);
 
                     });
                 }
-
                 @Override
                 public void onFailure(String error) {
                     mainThreadHandler.post(() -> {
-                        Toast.makeText(ImageSizeReducer.this, "Upload Failed: " + error, Toast.LENGTH_SHORT).show();
+                        btnCancelProcessing.setVisibility(View.GONE);
+                        buttonAnimationManager.GeneratingButtonAnimation("enable");
+                        buttonAnimationManager.ImageReducerGeneratingAnimation("stop");
                     });
                 }
             });
@@ -97,6 +105,7 @@ public class ImageSizeReducer extends AppCompatActivity {
 
 
     private void SetSelectedImagesInRecycler(){
+        buttonAnimationManager.DownloadAllImagesAnimation("disable");
         homeImgBdy.setVisibility(View.VISIBLE);
         homeLinearBdy.setVisibility(View.GONE);
         buttonAnimationManager.SelectImageAnimation("unloop_animation");
@@ -162,31 +171,27 @@ public class ImageSizeReducer extends AppCompatActivity {
 
         toolbarBackBtn = findViewById(R.id.toolbar_back_btn);
         toolbarTitle = findViewById(R.id.toolbar_in_tools_title_id);
-
         lottieAnimationSelectImages = findViewById(R.id.animation_select_image_id_abgr);
         generateButton = findViewById(R.id.generating_animation_id_bg_remover_layout);
         downloadAllImagesLottie = findViewById(R.id.lottie_anim_download_in_bottom_toolbar_bgrl);
         downloadingAllImagesLottie = findViewById(R.id.lottie_anim_downloading_in_bottom_toolbar_bgrl);
-
+        btnCancelProcessing = findViewById(R.id.btn_cancel_processing_rbg_l);
         homeImgBdy = findViewById(R.id.neon_bg_2_reduce_img_lay);
         homeLinearBdy = findViewById(R.id.linear_home_rszimg);
         selectImagesFromBdy = findViewById(R.id.select_img_btn_in_bdy_enhance_img_layout);
         RV_SelectedImages = findViewById(R.id.recycler_view_id_reduce_img_size);
-
-
         buttonAnimationManager = new ButtonAnimationManager(this);
         checkConnection = new CheckConnection(this);
         customToastManager = new CustomToastManager(this);
-
         //Set Initial Thing
-
         homeImgBdy.setVisibility(View.GONE);
         homeLinearBdy.setVisibility(View.VISIBLE);
-
         toolbarTitle.setText("Size Reducer");
+        btnCancelProcessing.setVisibility(View.GONE);
         buttonAnimationManager.SelectImageAnimation("loop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("disable");
         buttonAnimationManager.DownloadAllImagesAnimation("disable");
+        buttonAnimationManager.ImageReducerGeneratingAnimation("stop");
 
         //Onclick On Toolbar Back Button
         toolbarBackBtn.setOnClickListener(new View.OnClickListener() {
@@ -212,22 +217,88 @@ public class ImageSizeReducer extends AppCompatActivity {
             public void onClick(View v) {
                 if(adapter.getAllSizes() == null){
                     Log.d("WOWWWWW","problem In list");
-
                 }else{
-                    Log.d("WOWWWWW",adapter.getAllSizes().toString());
-                    Log.d("WOWWWWW",adapter.getFinalImageUri().toString());
+                    if (checkConnection.isInternetConnected()) {
+                        // Start animations
+                        buttonAnimationManager.ImageReducerGeneratingAnimation("start");
+                        buttonAnimationManager.GeneratingButtonAnimation("animated");
+                        btnCancelProcessing.setVisibility(View.VISIBLE);
 
-                    UploadImageInServer(adapter.getFinalImageUri(),adapter.getAllSizes());
+                        // Upload image to server
+                        UploadImageInServer(adapter.getFinalImageUri(), adapter.getAllSizes());
+                        adapter.setUploadingStates(true);
+
+                        checkConnection.checkServerConnection(new CheckConnection.ServerConnectionListener() {
+                            @Override
+                            public void onConnectionChecked(boolean isConnected) {
+                                if (!isConnected) {
+                                    Log.d("Called", "Connection Failed");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // Stop animations & show error
+                                            buttonAnimationManager.ImageReducerGeneratingAnimation("stop");
+                                            buttonAnimationManager.GeneratingButtonAnimation("enable");
+                                            btnCancelProcessing.setVisibility(View.GONE);
+                                            adapter.setUploadingStates(true);
+                                            imageSizeUploadHelper.cancelUpload();
+
+                                            CustomNetworkDialog dialog = new CustomNetworkDialog(
+                                                    ImageSizeReducer.this,
+                                                    R.drawable.server_error_2,
+                                                    "Server Connection Failed, Please Try Again!"
+                                            );
+                                            dialog.show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+
+                    } else {
+                        // **Fix: Stop UI animations when there’s no internet**
+                        buttonAnimationManager.ImageReducerGeneratingAnimation("stop");
+                        buttonAnimationManager.GeneratingButtonAnimation("enable");
+                        btnCancelProcessing.setVisibility(View.GONE);
+                        adapter.setUploadingStates(true);
+
+                        // Show "No Internet" dialog
+                        CustomNetworkDialog dialog = new CustomNetworkDialog(
+                                ImageSizeReducer.this,
+                                R.drawable.no_internet,
+                                "Please Connect Your Internet."
+                        );
+                        dialog.show();
+                    }
+
 
 
                 }
             }
         });
+        btnCancelProcessing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageSizeUploadHelper.cancelUpload();
+                adapter.setUploadingStates(false);
+                buttonAnimationManager.GeneratingButtonAnimation("enable");
+                buttonAnimationManager.ImageReducerGeneratingAnimation("stop");
+                btnCancelProcessing.setVisibility(View.GONE);
 
-
-
-
-
+            }
+        });
+        downloadAllImagesLottie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.DownloadAllImages();
+            }
+        });
+        downloadingAllImagesLottie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.DownloadAllImages();
+            }
+        });
         //Get Result From (AllimagesActivity)
         selectImagesLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
