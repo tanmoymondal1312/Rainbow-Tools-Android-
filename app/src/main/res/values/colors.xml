@@ -13,8 +13,18 @@
     <color name="button_pressed">#3700B3</color>
     <color name ="checkbox_checked_color">#C400FF</color>
     <color name="transparent_gray">#80808080</color>
-    <color name="gradient_text">#FF4081</color> <!-- Pinkish Notification Color -->
+    <color name="gradient_text">#FF4081</color>
     <color name="hard_red">#8B0000</color>
+
+
+    <color name="rainbow_color_1">#98A4EC</color>
+    <color name="rainbow_color_2">#58ACD4</color>
+    <color name="rainbow_color_3">#6ba8ed</color>
+    <color name="rainbow_color_4">#829B82</color>
+    <color name="rainbow_color_5">#856FEA</color>
+
+
+
 
 
 

@@ -24,8 +24,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -47,14 +45,16 @@
                     android:layout_weight="1"
                     android:gravity="center">
 
+
+                    <!--applyMovingRainbowGradient in ButtonAnimationManager-->
                     <TextView
                         android:id="@+id/txt_view_1_in_bg_remover_bdy_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="No Editing Skills Needed – Just Tap &amp; Remove!"
                         android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:fontFamily="sans-serif-condensed"
+                        android:textStyle="normal"
+                        android:fontFamily="@font/playfairdisplay_italic"
                         android:letterSpacing="0.05"
                         android:padding="10dp"
                         android:textAlignment="center"
@@ -63,7 +63,7 @@
                         android:shadowDx="2"
                         android:shadowDy="2"
                         android:shadowRadius="5"
-                        android:textColor="@android:color/transparent"
+                        android:textColor="@android:color/black"
                         android:layout_gravity="center" />
 
                 </RelativeLayout>
@@ -75,7 +75,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:background="@drawable/text_bg_1">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -141,17 +142,30 @@
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
-                            android:orientation="horizontal">
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/bg_remover_l_2"
-                                android:layout_margin="@dimen/_20sdp"/>
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/select_img_btn_in_bdy_enhance_img_layout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/select_img_icn"
+                                android:scaleType="fitCenter"
+                                android:adjustViewBounds="true"
+                                android:padding="0dp"
+                                android:background="@drawable/ripple_effect"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:contentDescription="Select Image"
+                                android:foreground="?attr/selectableItemBackground"/>
+
+
+
                         </LinearLayout>
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_weight="0.5"
                             android:orientation="horizontal">
 
                             <LinearLayout

@@ -23,7 +23,9 @@ import com.mediaghor.rainbowtools.Activities.TextExtractorActivity;
 import com.mediaghor.rainbowtools.Models.CardItemsModel;
 import com.mediaghor.rainbowtools.R;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHolder> {
 
@@ -60,26 +62,23 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
 
 
 
+        // Define a mapping of text to activity classes
+        Map<String, Class<?>> activityMap = new HashMap<>();
+        activityMap.put("Background Remover", BackgroundRemoverActivity.class);
+        activityMap.put("Photo Optimizer", EnhanceImagesActivity.class);
+        activityMap.put("Text Extractor From Images", TextExtractorActivity.class);
+        activityMap.put("Image Size Reducer", ImageSizeReducer.class);
+
         holder.cardView.setOnClickListener(v -> {
-            Intent intent = null;
-            if (currentItem.getText().equals("Background Remover")) {
-                intent = new Intent(context, BackgroundRemoverActivity.class);
-            }else if(currentItem.getText().equals("Photo Optimizer")){
-                intent = new Intent(context, EnhanceImagesActivity.class);
-            } else if (currentItem.getText().equals("Text Extractor From Images")) {
-                intent = new Intent(context, TextExtractorActivity.class);
-            }else if (currentItem.getText().equals("Image Size Reducer")) {
-                intent = new Intent(context, ImageSizeReducer.class);
-
-            }
-            // Start the activity if an intent is created
-            if (intent != null) {
+            Class<?> activityClass = activityMap.get(currentItem.getText());
+            if (activityClass != null) {
+                Intent intent = new Intent(context, activityClass);
                 context.startActivity(intent);
-            }else {
-                Log.d("LINE70","intent Null");
-
+            } else {
+                Log.d("LINE70", "Intent Null");
             }
         });
+
     }
 
 

@@ -216,11 +216,18 @@ public class ButtonAnimationManager {
     public void applyMovingRainbowGradient(TextView textView) {
         if (textView == null) return;
 
-        // Define rainbow colors
+
+        //Rainbow color but there added 5. So sorry to the programme for the 6 and 7 th color
         int[] rainbowColors = {
-                Color.RED, Color.MAGENTA, Color.BLUE,
-                Color.CYAN, Color.GREEN, Color.YELLOW, Color.RED
+                ContextCompat.getColor(context, R.color.rainbow_color_1),
+                ContextCompat.getColor(context, R.color.rainbow_color_2),
+                ContextCompat.getColor(context, R.color.rainbow_color_3),
+                ContextCompat.getColor(context, R.color.rainbow_color_4),
+                ContextCompat.getColor(context, R.color.rainbow_color_5),
         };
+
+
+
 
         float textWidth = textView.getPaint().measureText(textView.getText().toString());
         float textSize = textView.getTextSize();
