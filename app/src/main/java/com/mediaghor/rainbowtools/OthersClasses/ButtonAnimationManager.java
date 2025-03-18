@@ -260,20 +260,6 @@ public class ButtonAnimationManager {
     }
 
 
-    public void ManageSunBackground(String state){
-        if (context instanceof Activity) {
-            LottieAnimationView sunBackground = activity.findViewById(R.id.sun_background_in_bg_remove_layout);
-            switch (state){
-                case"play":
-                    sunBackground.setVisibility(View.VISIBLE);
-                    sunBackground.loop(true);
-                    sunBackground.playAnimation();
-                    break;
-                case"disable":
-                    sunBackground.setVisibility(View.GONE);
-            }
-        }
-    }
 
     public void RemoveCrossButtonEXT(String state, View itemview){
         ImageView imageView;

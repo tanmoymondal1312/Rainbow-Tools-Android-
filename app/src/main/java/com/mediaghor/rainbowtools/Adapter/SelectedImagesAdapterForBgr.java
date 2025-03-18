@@ -58,7 +58,6 @@ public class SelectedImagesAdapterForBgr extends RecyclerView.Adapter<SelectedIm
         holder.deleteButton.setOnClickListener(v -> {
             selectedUris.remove(position);
             if(selectedUris.size() == 0){
-                buttonAnimationManager.ManageSunBackground("disable");
                 buttonAnimationManager.SelectImageAnimation("loop_animation");
                 buttonAnimationManager.GeneratingButtonAnimation("disable");
             }

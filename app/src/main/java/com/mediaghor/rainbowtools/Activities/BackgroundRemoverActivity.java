@@ -15,10 +15,13 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,11 +41,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.mediaghor.rainbowtools.Adapter.BackgroundRemovedImageAdapter;
 
+import com.mediaghor.rainbowtools.Adapter.SelectedImagesAdapterEXT;
 import com.mediaghor.rainbowtools.Adapter.SelectedImagesAdapterForBgr;
 import com.mediaghor.rainbowtools.Helpers.CheckConnection;
 import com.mediaghor.rainbowtools.Helpers.ImagePermissionHandler;
@@ -63,12 +68,15 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
     //Variables
 
     //Components
-    private ImageButton toolbarBackBtn;
+    private ImageButton toolbarBackBtn,selectImagesFromBdy;
     AppCompatButton cancel_processing;
     private RecyclerView RV_SelectedImages,RV_ProcessedImages;
     LottieAnimationView lottieAnimationSelectImages,lottieAnimationGenerateImages,download,downloading,lottieGeneratingProgressBar;
     View ProgressingIncluded;
     TextView textView_1,textView_2;
+    private int originalWidth;
+    FrameLayout bg;
+
 
 
 
@@ -159,22 +167,93 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
 
 
-
+    // Adapter name 'adapter2' Recyclerview name 'RV_ProcessedImages'
     private void SetProcessImagesInRecycler(){
-        adapter2 = new BackgroundRemovedImageAdapter(this,imageUrls);
+        SetUpImagesLinearly();
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         RV_ProcessedImages.setLayoutManager(layoutManager2);
+        adapter2 = new BackgroundRemovedImageAdapter(this,imageUrls);
         RV_ProcessedImages.setAdapter(adapter2);
+        ViewGroup.LayoutParams params__2 = RV_ProcessedImages.getLayoutParams();
+        params__2.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        RV_ProcessedImages.setLayoutParams(params__2);
     }
+
+
+
+
+    private void SetUpImagesLinearly(){
+        // Set RecyclerView to Linear Layout
+
+//        adapter.setUploadingState(true);
+//        adapter.setCardsColorBlur(false);
+
+        LinearLayoutManager linearLayoutManager__2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        RV_SelectedImages.setLayoutManager(linearLayoutManager__2);
+        // Set RecyclerView Width to 40dp
+        ViewGroup.LayoutParams params = RV_SelectedImages.getLayoutParams();
+        params.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics()); // Convert 40dp to px
+        RV_SelectedImages.setLayoutParams(params);
+        // Move RecyclerView to Left Side of Parent
+        if (params instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
+            marginParams.setMargins(0, marginParams.topMargin, marginParams.rightMargin, marginParams.bottomMargin);
+            RV_SelectedImages.setLayoutParams(marginParams);
+        }
+
+    }
+
+
+
+
+
+
+    // Adapter name 'adapter' Recyclerview name 'RV_SelectedImages'
+
     private void SetSelectedImagesInRecycler(){
-        buttonAnimationManager.ManageSunBackground("play");
-        buttonAnimationManager.SelectImageAnimation("unloop_animation");
-        buttonAnimationManager.GeneratingButtonAnimation("enable");
-        adapter = new SelectedImagesAdapterForBgr(this, selectedUris);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        RV_SelectedImages.setLayoutManager(layoutManager);
-        RV_SelectedImages.setAdapter(adapter);
+        bg.setVisibility(View.VISIBLE);
+        if (selectedUris.isEmpty()) {
+            // Normally set everything according to XML
+            buttonAnimationManager.SelectImageAnimation("unloop_animation");
+            buttonAnimationManager.GeneratingButtonAnimation("enable");
+            buttonAnimationManager.DownloadAllImagesAnimation("disable");
+            originalWidth = RV_SelectedImages.getLayoutParams().width;
+            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            RV_SelectedImages.setLayoutManager(layoutManager);
+            adapter = new SelectedImagesAdapterForBgr(this, selectedUris);
+            RV_SelectedImages.setAdapter(adapter);
+        } else {
+            // Reset everything when reselecting images
+            buttonAnimationManager.SelectImageAnimation("unloop_animation");
+            buttonAnimationManager.GeneratingButtonAnimation("enable");
+            buttonAnimationManager.DownloadAllImagesAnimation("disable");
+            // Reset RecyclerView position
+            ViewGroup.LayoutParams params = RV_SelectedImages.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            RV_SelectedImages.setLayoutParams(params);
+            if (params instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
+                marginParams.setMargins(0, marginParams.topMargin, marginParams.rightMargin, marginParams.bottomMargin);
+                RV_SelectedImages.setLayoutParams(marginParams);
+            }
+            // Set back to StaggeredGridLayout
+            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            RV_SelectedImages.setLayoutManager(layoutManager);
+            adapter = new SelectedImagesAdapterForBgr(this, selectedUris);
+            RV_SelectedImages.setAdapter(adapter);
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
 
     private void GetImagesFromDevices(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // For Android 13 (API 33) and above
@@ -229,12 +308,14 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         lottieAnimationGenerateImages = findViewById(R.id.generating_animation_id_bg_remover_layout);
         download = findViewById(R.id.lottie_anim_download_in_bottom_toolbar_bgrl);
         downloading = findViewById(R.id.lottie_anim_downloading_in_bottom_toolbar_bgrl);
+        selectImagesFromBdy = findViewById(R.id.select_img_btn_in_bdy_enhance_img_layout);
         RV_SelectedImages = findViewById(R.id.rv_right_for_selected_image_bg_remover_activity);
         RV_ProcessedImages = findViewById(R.id.rv_left_for_bg_removed_images_bg_remover_activity);
         cancel_processing = findViewById(R.id.btn_cancel_processing_rbg_l);
         ProgressingIncluded = findViewById(R.id.lottie_generating_in_bgr_l);
         lottieGeneratingProgressBar = findViewById(R.id.lottieAnimation_generating);
         textView_1 = findViewById(R.id.txt_view_1_in_bg_remover_bdy_layout);
+        bg = findViewById(R.id.frame_of_bg_bgr);
         //Implementation Everything
         buttonAnimationManager = new ButtonAnimationManager(this);
         customToastManager = new CustomToastManager(this);
@@ -247,7 +328,7 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
         buttonAnimationManager.SelectImageAnimation("loop_animation");
         buttonAnimationManager.GeneratingButtonAnimation("disable");
         buttonAnimationManager.DownloadAllImagesAnimation("disable");
-        buttonAnimationManager.ManageSunBackground("disable");
+        bg.setVisibility(View.GONE);
         cancel_processing.setVisibility(View.GONE);
         hideLoading();
 
@@ -263,6 +344,12 @@ public class BackgroundRemoverActivity extends AppCompatActivity {
 
         // Select Images Opening Image Chooser Activity (AllimagesActivity)
         lottieAnimationSelectImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetImagesFromDevices();
+            }
+        });
+        selectImagesFromBdy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 GetImagesFromDevices();

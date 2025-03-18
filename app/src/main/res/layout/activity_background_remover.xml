@@ -30,14 +30,18 @@
                 android:orientation="vertical"
                 android:background="@drawable/layout_bg_1">
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/sun_background_in_bg_remove_layout"
+                <FrameLayout
+                    android:id="@+id/frame_of_bg_bgr"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    aandroid:lottie_autoPlay="true"
-                    aandroid:lottie_loop="true"
-                    aandroid:lottie_fileName="sun_android_layout_bg.json"/>
+                    android:background="@drawable/background_114">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/lay_bg_114"
+                        android:scaleType="fitXY"
+                        android:layout_gravity="bottom" />
+                </FrameLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -213,16 +217,14 @@
                 android:orientation="horizontal">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_left_for_bg_removed_images_bg_remover_activity"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
                     android:layout_weight="1" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_right_for_selected_image_bg_remover_activity"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:layout_height="match_parent"/>
             </LinearLayout>
 
             <include

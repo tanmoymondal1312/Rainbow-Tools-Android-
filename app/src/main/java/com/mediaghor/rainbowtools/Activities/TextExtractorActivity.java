@@ -284,6 +284,8 @@ public class TextExtractorActivity extends AppCompatActivity {
         bdyDownloadItems.setVisibility(View.GONE);
         LinearRecuclerViewBdyctrlBg.setVisibility(View.GONE);
         imgHomeBg.setVisibility(View.VISIBLE);
+
+
         if (ImagesFromDevice.isEmpty()) {
             // Normally set everything according to XML
             buttonAnimationManager.SelectImageAnimation("unloop_animation");
@@ -291,13 +293,13 @@ public class TextExtractorActivity extends AppCompatActivity {
             buttonAnimationManager.DownloadAllImagesAnimation("disable");
 
             originalWidth = selectedImagesRecycler.getLayoutParams().width;
-            selectedImagesRecycler.setLayoutManager(new LinearLayoutManager(this));
+            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            selectedImagesRecycler.setLayoutManager(layoutManager);
 
             adapter = new SelectedImagesAdapterEXT(this, ImagesFromDevice);
             selectedImagesRecycler.setAdapter(adapter);
 
-            StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-            selectedImagesRecycler.setLayoutManager(layoutManager);
+
         } else {
             // Reset everything when reselecting images
             buttonAnimationManager.SelectImageAnimation("unloop_animation");
