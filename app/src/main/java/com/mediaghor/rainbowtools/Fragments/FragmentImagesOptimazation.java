@@ -55,7 +55,7 @@ public class FragmentImagesOptimazation extends Fragment {
         ));
 
         // Setting adapter
-        CardItemAdapter adapter = new CardItemAdapter(requireContext(), cardItemsList);
+        CardItemAdapter adapter = new CardItemAdapter(requireContext(), cardItemsList,1);
         recyclerView.setAdapter(adapter);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

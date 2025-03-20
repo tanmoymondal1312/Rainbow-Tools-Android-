@@ -17,8 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
-        android:background="@color/white">
+        android:gravity="center">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -26,6 +25,7 @@
             app:cardCornerRadius="8dp"
             app:cardElevation="6dp">
             <ImageView
+                android:background="@color/white"
                 android:id="@+id/tool_icon_img_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -21,6 +21,7 @@ import com.mediaghor.rainbowtools.Activities.EnhanceImagesActivity;
 import com.mediaghor.rainbowtools.Activities.ImageSizeReducer;
 import com.mediaghor.rainbowtools.Activities.TextExtractorActivity;
 import com.mediaghor.rainbowtools.Models.CardItemsModel;
+import com.mediaghor.rainbowtools.PDFOptimization.pdf_to_docx;
 import com.mediaghor.rainbowtools.R;
 
 import java.util.HashMap;
@@ -31,11 +32,23 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
 
     private Context context;
     private List<CardItemsModel> cardItemsList;
+    private OnItemClickListener listener;
+
+
+    final int PAGE;
 
     // Constructor
-    public CardItemAdapter(Context context, List<CardItemsModel> cardItemsList) {
+    public CardItemAdapter(Context context, List<CardItemsModel> cardItemsList,int page) {
         this.context = context;
         this.cardItemsList = cardItemsList;
+        this.PAGE = page;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int cardNo);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -63,21 +76,31 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.ViewHo
 
 
         // Define a mapping of text to activity classes
-        Map<String, Class<?>> activityMap = new HashMap<>();
-        activityMap.put("Background Remover", BackgroundRemoverActivity.class);
-        activityMap.put("Photo Optimizer", EnhanceImagesActivity.class);
-        activityMap.put("Text Extractor From Images", TextExtractorActivity.class);
-        activityMap.put("Image Size Reducer", ImageSizeReducer.class);
+        
+        if(PAGE == 1){
+            Map<String, Class<?>> activityMap = new HashMap<>();
+            activityMap.put("Background Remover", BackgroundRemoverActivity.class);
+            activityMap.put("Photo Optimizer", EnhanceImagesActivity.class);
+            activityMap.put("Text Extractor From Images", TextExtractorActivity.class);
+            activityMap.put("Image Size Reducer", ImageSizeReducer.class);
 
-        holder.cardView.setOnClickListener(v -> {
-            Class<?> activityClass = activityMap.get(currentItem.getText());
-            if (activityClass != null) {
-                Intent intent = new Intent(context, activityClass);
+            holder.cardView.setOnClickListener(v -> {
+                Class<?> activityClass = activityMap.get(currentItem.getText());
+                if (activityClass != null) {
+                    Intent intent = new Intent(context, activityClass);
+                    context.startActivity(intent);
+                } else {
+                    Log.d("LINE70", "Intent Null");
+                }
+            });
+        } else if (PAGE == 2) {
+            holder.cardView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, pdf_to_docx.class);
+                intent.putExtra("position",position+1);
                 context.startActivity(intent);
-            } else {
-                Log.d("LINE70", "Intent Null");
-            }
-        });
+            });
+        }
+
 
     }
 

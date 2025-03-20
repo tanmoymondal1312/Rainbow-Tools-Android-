@@ -39,7 +39,34 @@
                 android:layout_height="wrap_content"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center">
+            </ImageView>
+
+
+            <TextView
+                android:id="@+id/text_after_enhance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="After Enhance"
+                android:textSize="16sp"
+                android:textColor="#BEFDF7"
+                android:gravity="center"
+                android:layout_gravity="start"
+                android:layout_margin="@dimen/_10sdp"
+                android:fontFamily="@font/playfair_display_extra_bold_italic" />
+
+            <TextView
+                android:id="@+id/text_before_enhance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Before Enhance"
+                android:textSize="16sp"
+                android:textColor="#F5EB8F"
+                android:gravity="center"
+                android:layout_gravity="end"
+                android:layout_margin="@dimen/_10sdp"
+                android:fontFamily="@font/playfair_display_extra_bold_italic"/>
+
 
             <View
                 android:id="@+id/slider_line_view"
@@ -56,6 +83,18 @@
                 android:progress="50"
                 android:thumb="@drawable/slider_thumb"
                 android:progressDrawable="@android:color/transparent" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/progressing_bar_img_loading"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="center"
+                app:lottie_fileName="processing_brand.json"
+                android:adjustViewBounds="true"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
+
+
         </FrameLayout>
 
         <FrameLayout

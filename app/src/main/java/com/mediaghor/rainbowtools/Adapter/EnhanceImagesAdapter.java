@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -77,6 +78,9 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
 
     @Override
     public void onBindViewHolder(ImageViewHolder holder, int position) {
+        holder.textAfterEnhance.setVisibility(View.GONE);
+        holder.textBeforeEnhance.setVisibility(View.GONE);
+        holder.loadingImgAnim.setVisibility(View.GONE);
         Uri uriBeforeEnhance = beforeEnhanceImages.get(position);
 
         loadBeforeEnhanceImage(holder,uriBeforeEnhance);
@@ -110,6 +114,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         // Successfully Get The Process Images , So Lest Work With Those.
         if(afterEnhanceImages != null && iSEnhanceImagesGet && position < afterEnhanceImages.size()){
             Uri uriAfterEnhance = afterEnhanceImages.get(position);
+            holder.loadingImgAnim.setVisibility(View.VISIBLE);
             buttonAnimationManager.DownloadDeleteAnimationInItem("download", holder.itemView);
 
             resetViewState(holder);
@@ -142,7 +147,9 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         ImageView ImageViewBeforeEnhance,ImageViewAfterEnhance;
         View sliderLine;
         SeekBar slider;
-        LottieAnimationView AnimationRemoveItem,singleImageDownload;
+        LottieAnimationView AnimationRemoveItem,singleImageDownload,loadingImgAnim;
+        TextView textBeforeEnhance, textAfterEnhance;
+
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -152,6 +159,9 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
             slider = itemView.findViewById(R.id.slider);
             AnimationRemoveItem = itemView.findViewById(R.id.remove_item_from_recy_enhance_img_itm);
             singleImageDownload = itemView.findViewById(R.id.download_item_from_recy_enhance_img_itm);
+            loadingImgAnim = itemView.findViewById(R.id.progressing_bar_img_loading);
+            textBeforeEnhance = itemView.findViewById(R.id.text_before_enhance);
+            textAfterEnhance = itemView.findViewById(R.id.text_after_enhance);
 
         }
     }
@@ -263,7 +273,7 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
                                                    Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         holder.ImageViewAfterEnhance.setImageDrawable(resource);
                         buttonAnimationManager.CongressCuttingPaperAnimation("stop");
-
+                        holder.loadingImgAnim.setVisibility(View.GONE);
                         holder.ImageViewAfterEnhance.post(() -> {
                             holder.slider.setProgress(50);
                             handleSeekBarProgress(holder, holder.slider.getProgress());
@@ -272,6 +282,8 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
                         sliderLineSliderUnHide(holder);
                         animateSlider(holder);
                         setupSeekBar(holder);
+                        holder.textAfterEnhance.setVisibility(View.VISIBLE);
+                        holder.textBeforeEnhance.setVisibility(View.VISIBLE);
 
                         return false;
                     }
@@ -302,6 +314,10 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
         holder.slider.setVisibility(View.VISIBLE);
         holder.sliderLine.setVisibility(View.VISIBLE);
     }
+
+
+
+
 
 
     /**
@@ -359,7 +375,31 @@ public class EnhanceImagesAdapter extends RecyclerView.Adapter<EnhanceImagesAdap
     private void handleSeekBarProgress(ImageViewHolder holder, int progress) {
         updateClipping(holder, progress);
         updateLinePosition(holder, progress);
+        updateTextViewVisibility(holder, progress);
     }
+
+
+    /**
+     * Updates the visibility of the text views based on SeekBar progress.
+     *
+     * @param holder   The ViewHolder containing the TextViews.
+     * @param progress The current SeekBar progress.
+     */
+    private void updateTextViewVisibility(ImageViewHolder holder, int progress) {
+        if (holder.textBeforeEnhance == null || holder.textAfterEnhance == null) return;
+
+        if (progress >= 1 && progress <= 30) {
+            holder.textAfterEnhance.setVisibility(View.INVISIBLE);
+            holder.textBeforeEnhance.setVisibility(View.VISIBLE);
+        } else if (progress >= 70 && progress <= 100) {
+            holder.textAfterEnhance.setVisibility(View.VISIBLE);
+            holder.textBeforeEnhance.setVisibility(View.INVISIBLE);
+        } else {
+            holder.textAfterEnhance.setVisibility(View.VISIBLE);
+            holder.textBeforeEnhance.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     /**
      * Updates the clipping of the image based on the SeekBar progress.

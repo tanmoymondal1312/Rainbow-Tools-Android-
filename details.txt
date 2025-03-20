@@ -1,0 +1,6 @@
+Bacground Remover Tool -- Short name bgr
+
+bgr get an update v-1.0 
+The Images set will Strgadly and when process completed its set linearly left side of scrn
+And the process image will take matchparent
+added border on select image item, added background 
